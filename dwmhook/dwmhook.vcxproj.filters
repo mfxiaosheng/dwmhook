@@ -16,6 +16,9 @@
     <Filter Include="Header Files\FW1">
       <UniqueIdentifier>{7989d646-c2e6-4bbb-8e6c-22be8b25e22b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\polyhook2">
+      <UniqueIdentifier>{716d7058-269f-40a1-b2c3-d0fa5747ebb4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -163,6 +166,87 @@
     </ClInclude>
     <ClInclude Include="ck.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\ADisassembler.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\CapstoneDisassembler.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\Detour\ADetour.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\Detour\ILCallback.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\Detour\x64Detour.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\Detour\x86Detour.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\Enums.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\ErrorLog.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\EventDispatcher.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\Exceptions\AVehHook.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\Exceptions\BreakPointHook.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\Exceptions\HWBreakPointHook.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\IHook.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\Instruction.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\MemAccessor.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\MemProtector.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\Misc.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\PageAllocator.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\PE\EatHook.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\PE\IatHook.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\PE\PEB.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\Tests\StackCanary.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\Tests\TestEffectTracker.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\UID.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\Virtuals\VFuncSwapHook.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\Virtuals\VTableSwapHook.hpp">
+      <Filter>Header Files\polyhook2</Filter>
+    </ClInclude>
+    <ClInclude Include="polyhook2\ZydisDisassembler.hpp">
+      <Filter>Header Files\polyhook2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

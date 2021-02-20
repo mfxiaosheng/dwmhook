@@ -1,6 +1,7 @@
 #include "includes.hpp"
 #include "render.hpp"
-
+#include "polyhook2\Virtuals\VTableSwapHook.hpp"
+#include <vector>
 ID3D11Device* pD3DXDevice = nullptr;
 ID3D11DeviceContext* pD3DXDeviceCtx = nullptr;
 ID3D11Texture2D* pBackBuffer = nullptr;
@@ -18,7 +19,46 @@ BOOL bDataCompare( const BYTE* pData, const BYTE* bMask, const char* szMask )
 	}
 	return ( *szMask ) == NULL;
 }
+int MemoryScanEx(HANDLE hProcess, BYTE* pattern, SIZE_T length, std::vector<LPVOID>& list) {
+	SYSTEM_INFO sysinfo;
+	GetSystemInfo(&sysinfo);
 
+	LPVOID lpStartAddress = (LPVOID)sysinfo.lpMinimumApplicationAddress;
+	LPVOID lpEndAddress = (LPVOID)sysinfo.lpMaximumApplicationAddress;
+
+	//std::string strPattern(pattern, pattern + length);
+
+	while (lpStartAddress < lpEndAddress) {
+		MEMORY_BASIC_INFORMATION mbi = { 0, };
+		if (!VirtualQueryEx(hProcess, lpStartAddress, &mbi, sizeof(mbi))) {
+			return -1;
+		}
+
+		if (mbi.State == MEM_COMMIT && !(mbi.Protect & PAGE_GUARD) && mbi.Protect != PAGE_NOACCESS) {
+			if ((mbi.Protect & PAGE_EXECUTE_READ) || (mbi.Protect & PAGE_EXECUTE_READWRITE) || (mbi.Protect & PAGE_READONLY) || (mbi.Protect & PAGE_READWRITE)) {
+				BYTE* dump = new BYTE[mbi.RegionSize];
+				ReadProcessMemory(hProcess, lpStartAddress, dump, mbi.RegionSize, NULL);
+				//std::string mem(dump, dump + mbi.RegionSize);
+
+
+				for (int i = 0; i < mbi.RegionSize; i++)
+				{
+					if (i + length > mbi.RegionSize)
+						break;
+					if (memcmp(dump + i, pattern, length) == 0)
+					{
+						list.push_back((LPVOID)((SIZE_T)lpStartAddress + i));
+					}
+				}
+				delete[] dump;
+			}
+		}
+
+		lpStartAddress = (LPVOID)((SIZE_T)lpStartAddress + mbi.RegionSize);
+	}
+
+	return 1;
+}
 DWORD64 FindPattern( const char* szModule, BYTE* bMask, const char* szMask )
 {
 	MODULEINFO mi{ };
