@@ -105,6 +105,9 @@
     <ClCompile Include="FW1\FW1Precompiled.cpp">
       <Filter>Header Files\FW1</Filter>
     </ClCompile>
+    <ClCompile Include="VftableHk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="render.hpp">

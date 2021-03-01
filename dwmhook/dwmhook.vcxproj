@@ -113,6 +113,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="render.cpp" />
     <ClCompile Include="save_state.cpp" />
+    <ClCompile Include="VftableHk.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ck.h" />
