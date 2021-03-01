@@ -19,6 +19,7 @@ BOOL bDataCompare( const BYTE* pData, const BYTE* bMask, const char* szMask )
 	}
 	return ( *szMask ) == NULL;
 }
+//scan
 int MemoryScanEx(HANDLE hProcess, BYTE* pattern, SIZE_T length, std::vector<LPVOID>& list) {
 	SYSTEM_INFO sysinfo;
 	GetSystemInfo(&sysinfo);
@@ -285,6 +286,20 @@ UINT WINAPI MainThread( PVOID )
 	return 0;
 }
 
+//dxgi->CDXGISwapChainDWMLegacy::PresentMultiplaneOverlay(uint,uint,DXGI_HDR_METADATA_TYPE,void const *,uint,_DXGI_PRESENT_MULTIPLANE_OVERLAY const *)
+
+
+
+__int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signed int a4, __int64 a5, unsigned int a6, int* a7)
+{
+
+	return 0;
+}
+
+
+//lea     rax, ? ? _7 ? $CComContainedObject@VCDXGISwapChainDWMLegacy@@@ATL@@6B@    dxgi->vftable
+//48 8D 05 DA2E0700 - lea rax, [7FF9677445D8]
+//48 8D 05 ? ? ? ? ? ? ? ? 49 89 46 ? ? 49 89 7E ? ? 49 89 76 ? ? 49 8B C6
 BOOL WINAPI DllMain( HMODULE hDll, DWORD dwReason, PVOID )
 {
 	if ( dwReason == DLL_PROCESS_ATTACH )
