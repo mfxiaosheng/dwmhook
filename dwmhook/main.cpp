@@ -281,8 +281,9 @@ UINT WINAPI MainThread( PVOID )
 	};
 
 	auto dwRender = FindPattern( "d2d1.dll", PBYTE( "\x48\x8D\x05\x00\x00\x00\x00\x33\xED\x48\x8D\x71\x08" ), "xxx????xxxxxx" );
-
-	if ( dwRender )
+	//48 8D 05 ?? ?? ?? ?? 49 89 46 ?? 49 89 7E ?? 49 89 76 ?? 49 8B C6
+	DWORD64 pvftable = FindPattern("dxgi.dll", PBYTE("\x48\x8D\x05\x00\x00\x00\x00\x49\x89\x46\x00\x49\x89\x7E\x00\x49\x89\x76\x00\x49\x8B\xC6"), "xxx????xxx?xxx?xxx?xxx");
+	if ( dwRender && pvftable)
 	{
 		dwRender = ResolveRelative( dwRender );
 
@@ -295,8 +296,25 @@ UINT WINAPI MainThread( PVOID )
 		//MH_EnableHook( MH_ALL_HOOKS );
 
 		VftableHook<PDWORD64> vftable;
-		a = (pf)vftable.Hook((PDWORD64)0x2B17477FF78, 23, (PDWORD64)hkPresentMultiplaneOverlay);
-		AddToLog("table 0x%p\n", a);
+		DWORD64 dwoffset = (*((DWORD*)(pvftable + 3)));
+		pvftable = dwoffset + 7 + pvftable;
+		
+	
+		std::vector<LPVOID> list;
+		MemoryScanEx(GetCurrentProcess(), (BYTE*)&pvftable, 8, list);
+		
+		
+		for (auto l : list)//过滤掉用来查找的地址,这里还需要改进。不能输出虚表的地址不然会搜索不到正确的地址
+		{
+			if (l != &pvftable)
+			{
+				AddToLog("list 0x%p\n", l);
+				a = (pf)vftable.Hook((PDWORD64)l, 23, (PDWORD64)hkPresentMultiplaneOverlay);
+			}
+
+		}
+		
+	
 		AddToLog( "hooked!\n" );
 	}
 
