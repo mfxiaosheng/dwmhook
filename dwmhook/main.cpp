@@ -322,11 +322,6 @@ UINT WINAPI MainThread( PVOID )
 }
 
 //dxgi->CDXGISwapChainDWMLegacy::PresentMultiplaneOverlay(uint,uint,DXGI_HDR_METADATA_TYPE,void const *,uint,_DXGI_PRESENT_MULTIPLANE_OVERLAY const *)
-
-
-
-
-
 //lea     rax, ? ? _7 ? $CComContainedObject@VCDXGISwapChainDWMLegacy@@@ATL@@6B@    dxgi->vftable
 //48 8D 05 DA2E0700 - lea rax, [7FF9677445D8]
 //48 8D 05 ? ? ? ? ? ? ? ? 49 89 46 ? ? 49 89 7E ? ? 49 89 76 ? ? 49 8B C6
