@@ -1,6 +1,6 @@
 #include "includes.hpp"
 #include "render.hpp"
-#include "polyhook2\Virtuals\VTableSwapHook.hpp"
+#include "VftableHk.h"
 #include <vector>
 ID3D11Device* pD3DXDevice = nullptr;
 ID3D11DeviceContext* pD3DXDeviceCtx = nullptr;
@@ -94,6 +94,7 @@ void AddToLog( const char* fmt, ... )
 	{
 		char szDst[ 256 ];
 		sprintf_s( szDst, "Failed to create file %d", GetLastError() );
+		OutputDebugStringA(buff);
 		MessageBoxA( 0, szDst, 0, 0 );
 		return;
 	}
@@ -244,6 +245,19 @@ __int64 __fastcall hkPresentDWM( void* thisptr, IDXGISwapChain* pDxgiSwapChain, 
 	DrawEverything( pDxgiSwapChain );
 	return oPresentDWM( thisptr, pDxgiSwapChain, a3, a4, a5, a6, a7, a8, a9, a10 );
 }
+typedef  __int64 (*__fastcall pf)(__int64 a1, char a2, int a3, signed int a4, __int64 a5, unsigned int a6, int* a7);
+pf a;
+
+//return CDXGISwapChain::PresentMultiplaneOverlay(*(_QWORD *)(a1 + 64) + 120i64, a2, a3, a4, a5, a6, a7);
+__int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signed int a4, __int64 a5, unsigned int a6, int* a7)
+{
+	
+	IDXGISwapChain* pDxgiSwapChain = NULL;
+	pDxgiSwapChain =(IDXGISwapChain*)(*(__int64*)(a1 + 64) + 120);
+	DrawEverything(pDxgiSwapChain);
+
+	return a(a1, a2, a3, a4, a5, a6, a7);
+}
 
 UINT WINAPI MainThread( PVOID )
 {
@@ -276,10 +290,13 @@ UINT WINAPI MainThread( PVOID )
 
 		AddToLog( "table 0x%llx\n", dwRender );
 
-		MH_CreateHook( PVOID( Vtbl[ 6 ] ), PVOID( &hkPresentDWM ), reinterpret_cast< PVOID* >( &oPresentDWM ) );
-		MH_CreateHook( PVOID( Vtbl[ 7 ] ), PVOID( &hkPresentMPO ), reinterpret_cast< PVOID* >( &oPresentMPO ) );
-		MH_EnableHook( MH_ALL_HOOKS );
+		//MH_CreateHook( PVOID( Vtbl[ 6 ] ), PVOID( &hkPresentDWM ), reinterpret_cast< PVOID* >( &oPresentDWM ) );
+		//MH_CreateHook( PVOID( Vtbl[ 7 ] ), PVOID( &hkPresentMPO ), reinterpret_cast< PVOID* >( &oPresentMPO ) );
+		//MH_EnableHook( MH_ALL_HOOKS );
 
+		VftableHook<PDWORD64> vftable;
+		a = (pf)vftable.Hook((PDWORD64)0x2B17477FF78, 23, (PDWORD64)hkPresentMultiplaneOverlay);
+		AddToLog("table 0x%p\n", a);
 		AddToLog( "hooked!\n" );
 	}
 
@@ -290,11 +307,6 @@ UINT WINAPI MainThread( PVOID )
 
 
 
-__int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signed int a4, __int64 a5, unsigned int a6, int* a7)
-{
-
-	return 0;
-}
 
 
 //lea     rax, ? ? _7 ? $CComContainedObject@VCDXGISwapChainDWMLegacy@@@ATL@@6B@    dxgi->vftable
@@ -302,6 +314,8 @@ __int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signe
 //48 8D 05 ? ? ? ? ? ? ? ? 49 89 46 ? ? 49 89 7E ? ? 49 89 76 ? ? 49 8B C6
 BOOL WINAPI DllMain( HMODULE hDll, DWORD dwReason, PVOID )
 {
+	
+	
 	if ( dwReason == DLL_PROCESS_ATTACH )
 	{
 		DeleteFileA( LOG_FILE_PATH );
