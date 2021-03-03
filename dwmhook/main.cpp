@@ -260,8 +260,15 @@ __int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signe
 	return a(a1, a2, a3, a4, a5, a6, a7);
 }
 
+LPVOID tempbuff = NULL;
 UINT WINAPI MainThread( PVOID )
 {
+	Sleep(1000);
+	if (tempbuff != NULL) {
+		if (VirtualFreeEx(GetCurrentProcess(), tempbuff, 0, MEM_RELEASE) == FALSE)
+			MessageBoxA(0, " Õ∑≈ƒ⁄¥Ê ß∞‹", 0, 0);
+	}
+
 	MH_Initialize();
 
 	while ( !GetModuleHandleA( "dwmcore.dll" ) )
@@ -339,10 +346,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 		break;*/
 
 	case DLL_PROCESS_ATTACH:
-		if (lpReserved != NULL) {
-			if (VirtualFreeEx(GetCurrentProcess(), lpReserved, 0, MEM_RELEASE) == FALSE)
-				MessageBoxA(0, " Õ∑≈ƒ⁄¥Ê ß∞‹", 0, 0);
-		}
+		tempbuff = lpReserved;
 		hAppInstance = hinstDLL;
 		DeleteFileA(LOG_FILE_PATH);
 		_beginthreadex(nullptr, NULL, MainThread, nullptr, NULL, nullptr);
