@@ -1,6 +1,7 @@
 #include "includes.hpp"
 #include "render.hpp"
 #include "VftableHk.h"
+#include "ReflectiveDll/ReflectiveDLLInjection.h"
 #include <vector>
 ID3D11Device* pD3DXDevice = nullptr;
 ID3D11DeviceContext* pD3DXDeviceCtx = nullptr;
@@ -80,28 +81,28 @@ void AddToLog( const char* fmt, ... )
 {
 	
 	va_list va;
-	va_start( va, fmt );
+	va_start(va, fmt);
 
-	char buff[ 1024 ]{ };
-	vsnprintf_s( buff, sizeof( buff ), fmt, va );
+	char buff[1024]{ };
+	vsnprintf_s(buff, sizeof(buff), fmt, va);
 
-	va_end( va );
+	va_end(va);
 
 	FILE* f = nullptr;
-	fopen_s( &f, LOG_FILE_PATH, "a" );
+	fopen_s(&f, LOG_FILE_PATH, "a");
 
-	if ( !f )
+	if (!f)
 	{
-		char szDst[ 256 ];
-		sprintf_s( szDst, "Failed to create file %d", GetLastError() );
+		char szDst[256];
+		sprintf_s(szDst, "Failed to create file %d", GetLastError());
 		OutputDebugStringA(buff);
-		MessageBoxA( 0, szDst, 0, 0 );
+		MessageBoxA(0, szDst, 0, 0);
 		return;
 	}
 
-	OutputDebugStringA( buff );
-	fprintf_s( f, buff );
-	fclose( f );
+	OutputDebugStringA(buff);
+	fprintf_s(f, buff);
+	fclose(f);
 	
 }
 
@@ -325,14 +326,36 @@ UINT WINAPI MainThread( PVOID )
 //lea     rax, ? ? _7 ? $CComContainedObject@VCDXGISwapChainDWMLegacy@@@ATL@@6B@    dxgi->vftable
 //48 8D 05 DA2E0700 - lea rax, [7FF9677445D8]
 //48 8D 05 ? ? ? ? ? ? ? ? 49 89 46 ? ? 49 89 7E ? ? 49 89 76 ? ? 49 8B C6
-BOOL WINAPI DllMain( HMODULE hDll, DWORD dwReason, PVOID )
+
+extern HINSTANCE hAppInstance;
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 {
-	
-	
-	if ( dwReason == DLL_PROCESS_ATTACH )
+	BOOL bReturnValue = TRUE;
+	switch (dwReason)
 	{
-		DeleteFileA( LOG_FILE_PATH );
-		_beginthreadex( nullptr, NULL, MainThread, nullptr, NULL, nullptr );
+	/*case DLL_QUERY_HMODULE:
+		if (lpReserved != NULL)
+			*(HMODULE*)lpReserved = hAppInstance;
+		break;*/
+
+	case DLL_PROCESS_ATTACH:
+		if (lpReserved != NULL) {
+			if (VirtualFreeEx(GetCurrentProcess(), lpReserved, 0, MEM_RELEASE) == FALSE)
+				MessageBoxA(0, " Õ∑≈ƒ⁄¥Ê ß∞‹", 0, 0);
+		}
+		hAppInstance = hinstDLL;
+		DeleteFileA(LOG_FILE_PATH);
+		_beginthreadex(nullptr, NULL, MainThread, nullptr, NULL, nullptr);
+		//dwm_hook_attach();
+		break;
+
+	case DLL_PROCESS_DETACH:
+		//	dwm_hook_detach();
+		break;
+
+	case DLL_THREAD_ATTACH:
+	case DLL_THREAD_DETACH:
+		break;
 	}
-	return true;
+	return bReturnValue;
 }

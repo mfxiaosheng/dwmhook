@@ -16,6 +16,9 @@
     <Filter Include="Header Files\FW1">
       <UniqueIdentifier>{7989d646-c2e6-4bbb-8e6c-22be8b25e22b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ReflectiveDll">
+      <UniqueIdentifier>{f8458840-df8d-4983-844a-4e3e43b9d5f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -105,6 +108,12 @@
     <ClCompile Include="VftableHk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ReflectiveDll\ReflectiveDll.cpp">
+      <Filter>Source Files\ReflectiveDll</Filter>
+    </ClCompile>
+    <ClCompile Include="ReflectiveDll\ReflectiveLoader.cpp">
+      <Filter>Source Files\ReflectiveDll</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="render.hpp">
@@ -169,6 +178,12 @@
     </ClInclude>
     <ClInclude Include="VftableHk.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectiveDll\ReflectiveDLLInjection.h">
+      <Filter>Source Files\ReflectiveDll</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectiveDll\ReflectiveLoader.h">
+      <Filter>Source Files\ReflectiveDll</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

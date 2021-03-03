@@ -15,6 +15,7 @@
     <ProjectGuid>{BF574599-3CE2-4360-B229-D747272D45CF}</ProjectGuid>
     <RootNamespace>dwmhook</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>reflective</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -29,6 +30,7 @@
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -111,6 +113,8 @@
     <ClCompile Include="FW1\FW1FontWrapper.cpp" />
     <ClCompile Include="FW1\FW1Precompiled.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ReflectiveDll\ReflectiveDll.cpp" />
+    <ClCompile Include="ReflectiveDll\ReflectiveLoader.cpp" />
     <ClCompile Include="render.cpp" />
     <ClCompile Include="save_state.cpp" />
     <ClCompile Include="VftableHk.cpp" />
@@ -134,6 +138,8 @@
     <ClInclude Include="FW1\FW1FontWrapper.h" />
     <ClInclude Include="FW1\FW1Precompiled.h" />
     <ClInclude Include="includes.hpp" />
+    <ClInclude Include="ReflectiveDll\ReflectiveDLLInjection.h" />
+    <ClInclude Include="ReflectiveDll\ReflectiveLoader.h" />
     <ClInclude Include="render.hpp" />
     <ClInclude Include="save_state.hpp" />
     <ClInclude Include="VftableHk.h" />
