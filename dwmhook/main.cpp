@@ -3,6 +3,7 @@
 #include "VftableHk.h"
 #include "ReflectiveDll/ReflectiveDLLInjection.h"
 #include <vector>
+#include <d3d10_1.h>
 ID3D11Device* pD3DXDevice = nullptr;
 ID3D11DeviceContext* pD3DXDeviceCtx = nullptr;
 ID3D11Texture2D* pBackBuffer = nullptr;
@@ -96,7 +97,7 @@ void AddToLog( const char* fmt, ... )
 		char szDst[256];
 		sprintf_s(szDst, "Failed to create file %d", GetLastError());
 		OutputDebugStringA(buff);
-		MessageBoxA(0, szDst, 0, 0);
+		MessageBoxA(0, buff, 0, 0);
 		return;
 	}
 
@@ -287,7 +288,7 @@ UINT WINAPI MainThread( PVOID )
 	{
 		return sig = sig + *reinterpret_cast< PULONG >( sig + 0x3 ) + 0x7;
 	};
-
+	//48 8D 05 ?? ?? ?? ?? 33 ED 48 8D 71 08
 	auto dwRender = FindPattern( "d2d1.dll", PBYTE( "\x48\x8D\x05\x00\x00\x00\x00\x33\xED\x48\x8D\x71\x08" ), "xxx????xxxxxx" );
 	//48 8D 05 ?? ?? ?? ?? 49 89 46 ?? 49 89 7E ?? 49 89 76 ?? 49 8B C6
 	DWORD64 pvftable = FindPattern("dxgi.dll", PBYTE("\x48\x8D\x05\x00\x00\x00\x00\x49\x89\x46\x00\x49\x89\x7E\x00\x49\x89\x76\x00\x49\x8B\xC6"), "xxx????xxx?xxx?xxx?xxx");
@@ -337,6 +338,8 @@ UINT WINAPI MainThread( PVOID )
 extern HINSTANCE hAppInstance;
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 {
+
+	
 	BOOL bReturnValue = TRUE;
 	switch (dwReason)
 	{
