@@ -4,6 +4,7 @@
 #include "ReflectiveDll/ReflectiveDLLInjection.h"
 #include <vector>
 #include <d3d10_1.h>
+#pragma comment( lib, "d3d11.lib" )
 ID3D11Device* pD3DXDevice = nullptr;
 ID3D11DeviceContext* pD3DXDeviceCtx = nullptr;
 ID3D11Texture2D* pBackBuffer = nullptr;
@@ -56,7 +57,7 @@ int MemoryScanEx(HANDLE hProcess, BYTE* pattern, SIZE_T length, std::vector<LPVO
 				delete[] dump;
 			}
 		}
-
+		
 		lpStartAddress = (LPVOID)((SIZE_T)lpStartAddress + mbi.RegionSize);
 	}
 
@@ -261,6 +262,49 @@ __int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signe
 	return a(a1, a2, a3, a4, a5, a6, a7);
 }
 
+
+DWORD64 GetVtable()
+{
+	DXGI_SWAP_CHAIN_DESC sd;
+	ZeroMemory(&sd, sizeof(sd));
+	sd.BufferCount = 1;
+	sd.BufferDesc.Width = 640;
+	sd.BufferDesc.Height = 480;
+	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	sd.BufferDesc.RefreshRate.Numerator = 60;
+	sd.BufferDesc.RefreshRate.Denominator = 1;
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	sd.OutputWindow = GetDesktopWindow();
+	sd.SampleDesc.Count = 1;
+	sd.SampleDesc.Quality = 0;
+	sd.Windowed = TRUE;
+
+	D3D_FEATURE_LEVEL  FeatureLevelsRequested = D3D_FEATURE_LEVEL_11_0;
+	UINT               numLevelsRequested = 1;
+	D3D_FEATURE_LEVEL  FeatureLevelsSupported;
+	HRESULT hr;
+	IDXGISwapChain* g_pSwapChain;
+	ID3D11Device* g_pd3dDevice;
+	ID3D11DeviceContext* g_pImmediateContext;
+	if (FAILED(hr = D3D11CreateDeviceAndSwapChain(NULL,
+		D3D_DRIVER_TYPE_HARDWARE,
+		NULL,
+		0,
+		&FeatureLevelsRequested,
+		1,
+		D3D11_SDK_VERSION,
+		&sd,
+		&g_pSwapChain,
+		&g_pd3dDevice,
+		&FeatureLevelsSupported,
+		&g_pImmediateContext)))
+	{
+		return hr;
+	}
+
+	return *(DWORD64*)g_pSwapChain;
+}
+
 LPVOID tempbuff = NULL;
 UINT WINAPI MainThread( PVOID )
 {
@@ -310,6 +354,7 @@ UINT WINAPI MainThread( PVOID )
 		
 	
 		std::vector<LPVOID> list;
+		//AddToLog("GetVtable 0x%p\n", GetVtable());
 		MemoryScanEx(GetCurrentProcess(), (BYTE*)&pvftable, 8, list);
 		
 		
