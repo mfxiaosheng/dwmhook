@@ -39,6 +39,10 @@
 #include <mutex>
 #include <thread>
 
+
+#include <stdio.h>
+#include <stdint.h>
+#include <winnt.h> 
 #pragma warning(pop)
 
 //

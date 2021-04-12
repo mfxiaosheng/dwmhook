@@ -283,21 +283,21 @@ DLLEXPORT ULONG_PTR WINAPI ReflectiveLoader( VOID )
 
 	pVirtualProtectA = (VIRTUALPROTECT)pGetProcAddress(hkernel32, Str_VirtualProtectA);
 	pLoadLibraryExA = (LOADLIBRARYEXA)pGetProcAddress(hkernel32, Str_LoadLibraryExA);
-	uiBaseAddress = (ULONG_PTR)pLoadLibraryExA(dllpath, NULL, DONT_RESOLVE_DLL_REFERENCES);
+//	uiBaseAddress = (ULONG_PTR)pLoadLibraryExA(dllpath, NULL, DONT_RESOLVE_DLL_REFERENCES);
 	//uiBaseAddress = (ULONG_PTR)pLoadLibraryA(dllpath);
 	if (uiBaseAddress == NULL)
 	{
 		return 0;
 	}
-	//uiBaseAddress = (ULONG_PTR)pVirtualAlloc( NULL, ((PIMAGE_NT_HEADERS)uiHeaderValue)->OptionalHeader.SizeOfImage, MEM_RESERVE|MEM_COMMIT, PAGE_EXECUTE_READWRITE );
+	uiBaseAddress = (ULONG_PTR)pVirtualAlloc( NULL, ((PIMAGE_NT_HEADERS)uiHeaderValue)->OptionalHeader.SizeOfImage, MEM_RESERVE|MEM_COMMIT, PAGE_EXECUTE_READWRITE );
 	//这里是利用RXWDLL的内存进行覆盖执行
 	
 	//uiBaseAddress = uiBaseAddress + 0x36000 + 0x35000;
-	uiBaseAddress = uiBaseAddress + 0x1000;
+	//uiBaseAddress = uiBaseAddress + 0x1000;
 	if (pVirtualProtectA == NULL)
 		return 0;
 	DWORD old_protect = 0;
-	//pVirtualProtectA((LPVOID)uiBaseAddress, 0x400000, PAGE_EXECUTE_READWRITE,&old_protect);
+	pVirtualProtectA((LPVOID)uiBaseAddress, 0x400000, PAGE_EXECUTE_READWRITE,&old_protect);
 	// we must now copy over the headers
 	uiValueA = ((PIMAGE_NT_HEADERS)uiHeaderValue)->OptionalHeader.SizeOfHeaders;
 	uiValueB = uiLibraryAddress;

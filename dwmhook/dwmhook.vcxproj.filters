@@ -114,6 +114,9 @@
     <ClCompile Include="ReflectiveDll\ReflectiveLoader.cpp">
       <Filter>Source Files\ReflectiveDll</Filter>
     </ClCompile>
+    <ClCompile Include="PdbFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="render.hpp">
@@ -184,6 +187,9 @@
     </ClInclude>
     <ClInclude Include="ReflectiveDll\ReflectiveLoader.h">
       <Filter>Source Files\ReflectiveDll</Filter>
+    </ClInclude>
+    <ClInclude Include="PdbFile.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

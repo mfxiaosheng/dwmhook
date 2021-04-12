@@ -3,8 +3,8 @@
 #include "VftableHk.h"
 #include "ReflectiveDll/ReflectiveDLLInjection.h"
 #include <vector>
-#include <d3d10_1.h>
-#pragma comment( lib, "d3d11.lib" )
+//#include <d3d10_1.h>
+//#pragma comment( lib, "d3d11.lib" )
 ID3D11Device* pD3DXDevice = nullptr;
 ID3D11DeviceContext* pD3DXDeviceCtx = nullptr;
 ID3D11Texture2D* pBackBuffer = nullptr;
@@ -12,7 +12,7 @@ ID3D11RenderTargetView* pRenderTarget = nullptr;
 
 IFW1Factory* pFontFactory = nullptr;
 IFW1FontWrapper* pFontWrapper = nullptr;
-
+void AddToLog(const char* fmt, ...);
 BOOL bDataCompare( const BYTE* pData, const BYTE* bMask, const char* szMask )
 {
 	for ( ; *szMask; ++szMask, ++pData, ++bMask )
@@ -66,7 +66,13 @@ int MemoryScanEx(HANDLE hProcess, BYTE* pattern, SIZE_T length, std::vector<LPVO
 DWORD64 FindPattern( const char* szModule, BYTE* bMask, const char* szMask )
 {
 	MODULEINFO mi{ };
-	GetModuleInformation( GetCurrentProcess(), GetModuleHandleA( szModule ), &mi, sizeof( mi ) );
+	HMODULE hmodule = GetModuleHandleA(szModule);
+	if (hmodule == NULL)
+	{
+		AddToLog("module error");
+		return 0;
+	}
+	GetModuleInformation( GetCurrentProcess(), hmodule, &mi, sizeof( mi ) );
 
 	DWORD64 dwBaseAddress = DWORD64( mi.lpBaseOfDll );
 	const auto dwModuleSize = mi.SizeOfImage;
@@ -98,7 +104,7 @@ void AddToLog( const char* fmt, ... )
 		char szDst[256];
 		sprintf_s(szDst, "Failed to create file %d", GetLastError());
 		OutputDebugStringA(buff);
-		MessageBoxA(0, buff, 0, 0);
+		//MessageBoxA(0, buff, 0, 0);
 		return;
 	}
 
@@ -114,6 +120,10 @@ void DrawEverything( IDXGISwapChain* pDxgiSwapChain )
 	if ( b )
 	{
 		pDxgiSwapChain->GetDevice( __uuidof( ID3D11Device ), ( void** )&pD3DXDevice );
+		if (pD3DXDevice == NULL)
+		{
+			return;
+		}
 		pDxgiSwapChain->AddRef();
 		pD3DXDevice->GetImmediateContext( &pD3DXDeviceCtx );
 
@@ -258,67 +268,116 @@ __int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signe
 	IDXGISwapChain* pDxgiSwapChain = NULL;
 	pDxgiSwapChain =(IDXGISwapChain*)(*(__int64*)(a1 + 64) + 120);
 	DrawEverything(pDxgiSwapChain);
-
+	
 	return a(a1, a2, a3, a4, a5, a6, a7);
 }
 
 
-DWORD64 GetVtable()
-{
-	DXGI_SWAP_CHAIN_DESC sd;
-	ZeroMemory(&sd, sizeof(sd));
-	sd.BufferCount = 1;
-	sd.BufferDesc.Width = 640;
-	sd.BufferDesc.Height = 480;
-	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	sd.BufferDesc.RefreshRate.Numerator = 60;
-	sd.BufferDesc.RefreshRate.Denominator = 1;
-	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.OutputWindow = GetDesktopWindow();
-	sd.SampleDesc.Count = 1;
-	sd.SampleDesc.Quality = 0;
-	sd.Windowed = TRUE;
-
-	D3D_FEATURE_LEVEL  FeatureLevelsRequested = D3D_FEATURE_LEVEL_11_0;
-	UINT               numLevelsRequested = 1;
-	D3D_FEATURE_LEVEL  FeatureLevelsSupported;
-	HRESULT hr;
-	IDXGISwapChain* g_pSwapChain;
-	ID3D11Device* g_pd3dDevice;
-	ID3D11DeviceContext* g_pImmediateContext;
-	if (FAILED(hr = D3D11CreateDeviceAndSwapChain(NULL,
-		D3D_DRIVER_TYPE_HARDWARE,
-		NULL,
-		0,
-		&FeatureLevelsRequested,
-		1,
-		D3D11_SDK_VERSION,
-		&sd,
-		&g_pSwapChain,
-		&g_pd3dDevice,
-		&FeatureLevelsSupported,
-		&g_pImmediateContext)))
-	{
-		return hr;
-	}
-
-	return *(DWORD64*)g_pSwapChain;
-}
+ DWORD64 GetVtable()
+ {
+ 	DXGI_SWAP_CHAIN_DESC sd;
+ 	ZeroMemory(&sd, sizeof(sd));
+ 	sd.BufferCount = 1;
+ 	sd.BufferDesc.Width = 640;
+ 	sd.BufferDesc.Height = 480;
+ 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+ 	sd.BufferDesc.RefreshRate.Numerator = 60;
+ 	sd.BufferDesc.RefreshRate.Denominator = 1;
+ 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+ 	sd.OutputWindow = GetDesktopWindow();
+ 	sd.SampleDesc.Count = 1;
+ 	sd.SampleDesc.Quality = 0;
+ 	sd.Windowed = TRUE;
+ 
+ 	D3D_FEATURE_LEVEL  FeatureLevelsRequested = D3D_FEATURE_LEVEL_11_0;
+ 	UINT               numLevelsRequested = 1;
+ 	D3D_FEATURE_LEVEL  FeatureLevelsSupported;
+ 	HRESULT hr;
+ 	IDXGISwapChain* g_pSwapChain;
+ 	ID3D11Device* g_pd3dDevice;
+ 	ID3D11DeviceContext* g_pImmediateContext;
+ 	if (FAILED(hr = D3D11CreateDeviceAndSwapChain(NULL,
+ 		D3D_DRIVER_TYPE_HARDWARE,
+ 		NULL,
+ 		0,
+ 		&FeatureLevelsRequested,
+ 		1,
+ 		D3D11_SDK_VERSION,
+ 		&sd,
+ 		&g_pSwapChain,
+ 		&g_pd3dDevice,
+ 		&FeatureLevelsSupported,
+ 		&g_pImmediateContext)))
+ 	{
+ 		return hr;
+ 	}
+ 
+ 	return *(DWORD64*)g_pSwapChain;
+ }
 
 LPVOID tempbuff = NULL;
-UINT WINAPI MainThread( PVOID )
+UINT WINAPI MainThread1(PVOID)
 {
-	Sleep(1000);
-	if (tempbuff != NULL) {
-		if (VirtualFreeEx(GetCurrentProcess(), tempbuff, 0, MEM_RELEASE) == FALSE)
-			MessageBoxA(0, "释放内存失败", 0, 0);
+	AddToLog("开始");
+	DWORD64 pvftable = FindPattern("dxgi.dll", PBYTE("\x48\x8D\x05\x00\x00\x00\x00\x49\x89\x46\x00\x49\x89\x7E\x00\x49\x89\x76\x00\x49\x8B\xC6"), "xxx????xxx?xxx?xxx?xxx");
+	//DWORD64 pvftable = GetVtable();
+	
+	if (pvftable == NULL)
+	{
+		AddToLog("pvftable == NULL");
+		return 0;
+	}
+	
+	VftableHook<PDWORD64> vftable;
+	DWORD64 dwoffset = (*((DWORD*)(pvftable + 3)));
+	pvftable = dwoffset + 7 + pvftable;
+
+	pvftable = GetVtable();
+	std::vector<LPVOID> list;
+	//AddToLog("GetVtable 0x%p\n", GetVtable());
+	MemoryScanEx(GetCurrentProcess(), (BYTE*)&pvftable, 8, list);
+
+
+
+	for (auto l : list)//过滤掉用来查找的地址,这里还需要改进。不能输出虚表的地址不然会搜索不到正确的地址
+	{
+		if (l != &pvftable)
+		{
+			AddToLog("list 0x%p\n", l);
+			//MessageBoxA(0, "遍历对象", 0, 0);
+			a = (pf)vftable.Hook((PDWORD64)l, 23, (PDWORD64)hkPresentMultiplaneOverlay);
+		}
+
 	}
 
-	MH_Initialize();
 
-	while ( !GetModuleHandleA( "dwmcore.dll" ) )
-		Sleep( 150 );
+	AddToLog("hooked!\n");
+	return 0;
+}
+	
+UINT WINAPI MainThread( PVOID )
+{
+	//OutputDebugStringA("123123123333333333");
 
+	AddToLog("123");
+	AddToLog("123");
+	AddToLog("123");
+	AddToLog("123");
+	return 0;
+	if (tempbuff != NULL) {
+// 		if (VirtualFreeEx(GetCurrentProcess(), tempbuff, 0, MEM_RELEASE) == FALSE)
+// 			MessageBoxA(0, "释放内存失败", 0, 0);
+// 		else
+// 			MessageBoxA(0, "释放内存成功", 0, 0);
+		//VirtualFreeEx(GetCurrentProcess(), tempbuff, 0, MEM_RELEASE);
+	}
+	
+	//MH_Initialize();
+
+// 	while (!GetModuleHandleA( "dwmcore.dll" ))
+// 		Sleep( 150 );
+
+	
 	//
 	// [ E8 ? ? ? ? ] the relative addr will be converted to absolute addr
 	auto ResolveCall = []( DWORD_PTR sig )
@@ -338,6 +397,7 @@ UINT WINAPI MainThread( PVOID )
 	DWORD64 pvftable = FindPattern("dxgi.dll", PBYTE("\x48\x8D\x05\x00\x00\x00\x00\x49\x89\x46\x00\x49\x89\x7E\x00\x49\x89\x76\x00\x49\x8B\xC6"), "xxx????xxx?xxx?xxx?xxx");
 	if ( dwRender && pvftable)
 	{
+		//MessageBoxA(0, "开始搜索对象", 0, 0);
 		dwRender = ResolveRelative( dwRender );
 
 		PDWORD_PTR Vtbl = PDWORD_PTR( dwRender );
@@ -363,6 +423,7 @@ UINT WINAPI MainThread( PVOID )
 			if (l != &pvftable)
 			{
 				AddToLog("list 0x%p\n", l);
+				//MessageBoxA(0, "遍历对象", 0, 0);
 				a = (pf)vftable.Hook((PDWORD64)l, 23, (PDWORD64)hkPresentMultiplaneOverlay);
 			}
 
@@ -371,7 +432,9 @@ UINT WINAPI MainThread( PVOID )
 	
 		AddToLog( "hooked!\n" );
 	}
-
+	else
+		AddToLog("no!\n");
+	AddToLog("1!\n");
 	return 0;
 }
 
@@ -396,8 +459,8 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 	case DLL_PROCESS_ATTACH:
 		tempbuff = lpReserved;
 		hAppInstance = hinstDLL;
-		DeleteFileA(LOG_FILE_PATH);
-		_beginthreadex(nullptr, NULL, MainThread, nullptr, NULL, nullptr);
+		//DeleteFileA(LOG_FILE_PATH);
+		_beginthreadex(nullptr, NULL, MainThread1, nullptr, NULL, nullptr);
 		//dwm_hook_attach();
 		break;
 

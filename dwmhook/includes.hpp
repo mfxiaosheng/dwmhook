@@ -35,7 +35,7 @@ using namespace DirectX;
 #pragma comment( lib, "d3dcompiler.lib" )
 
 #define SAFE_RELEASE( p )	if( p ) { p->Release(); p = nullptr; }
-#define LOG_FILE_PATH		"C:\\DWM_GAY.log"
+#define LOG_FILE_PATH		"D:\\code\\dwmhook-master\\x64\\Release\\DWM_GAY.log"
 
 #include "MinHook.h"
 #include "save_state.hpp"
