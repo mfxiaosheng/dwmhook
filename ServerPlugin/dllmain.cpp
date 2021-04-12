@@ -3,16 +3,46 @@
 #include "SymbolFile.h"
 
 
-extern "C" BOOL  __declspec(dllexport) WINAPI  FindSymbolAddr(WCHAR* file_path, WCHAR* symbol_name, uint32_t& out_addr);
-
-extern "C" BOOL  WINAPI  FindSymbolAddr(WCHAR* file_path,WCHAR* symbol_name,uint32_t& out_addr)
+std::wstring ASCIIToUnicode(const char* v_szASCII)
 {
-    SymbolFile symbol_file(file_path);
+	std::wstring wstrUnicode = L"";
+	if (NULL == v_szASCII) {
+		return wstrUnicode;
+	}
+	DWORD dwNum = MultiByteToWideChar(CP_ACP, 0, v_szASCII, -1, NULL, 0);
+	if (ERROR_NO_UNICODE_TRANSLATION == dwNum) {
+		return wstrUnicode;
+	}
+	if (0 == dwNum) {
+		return wstrUnicode;
+	}
+	WCHAR* wcsUnicode = new WCHAR[dwNum + 1];
+	if (wcsUnicode == NULL)
+	{
+		return wstrUnicode;
+	}
+	memset(wcsUnicode, 0, (dwNum + 1) * sizeof(WCHAR));
 
-    if (symbol_file.FindSymbolByName(symbol_name, out_addr) == false)
+	MultiByteToWideChar(CP_ACP, 0, v_szASCII, -1, wcsUnicode, dwNum);
+	wstrUnicode = wcsUnicode;
+	if (NULL != wcsUnicode) {
+		delete[] wcsUnicode;
+	}
+	return wstrUnicode;
+}
+
+extern "C" BOOL  __declspec(dllexport) WINAPI  FindSymbolAddr(CHAR* file_path, CHAR* symbol_name, uint32_t& out_addr);
+
+extern "C" BOOL  WINAPI  FindSymbolAddr(CHAR* file_path,CHAR* symbol_name,uint32_t& out_addr)
+{
+    SymbolFile symbol_file(ASCIIToUnicode(file_path));
+
+    if (symbol_file.FindSymbolByName(ASCIIToUnicode(symbol_name)) == false)
     {
         return FALSE;
     }
+
+	out_addr = symbol_file.offset_;
     return TRUE;
 }
 

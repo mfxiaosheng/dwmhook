@@ -7,7 +7,7 @@
 #pragma comment(lib,"Ole32.lib")
 #pragma comment(lib,"OleAut32.lib")
 
-#define ___DEBUG 1
+#define ___DEBUG 0
 #if ___DEBUG
 #define wprintf
 #endif // ___DEBUG
@@ -26,7 +26,7 @@ SymbolFile::SymbolFile(std::wstring file_path)
 
 
 
-bool SymbolFile::FindSymbolByName(std::wstring name, uint32_t& offset)
+bool SymbolFile::FindSymbolByName(std::wstring name)
 {
 	this->find_name_ = name;
 	this->offset_ = 0;
@@ -41,7 +41,6 @@ bool SymbolFile::FindSymbolByName(std::wstring name, uint32_t& offset)
 	{
 		return false;
 	}
-
 	Cleanup();
 	return true;
 }

@@ -63,7 +63,7 @@ public:
 	void PrintPublicSymbol(IDiaSymbol* pSymbol);
 	void Cleanup();
 	SymbolFile(std::wstring file_path);
-	bool FindSymbolByName(std::wstring name, uint32_t& offset);
+	bool FindSymbolByName(std::wstring name);
 	bool FindNameCallBack(IDiaSymbol* pSymbol);
 public:
 	const wchar_t* g_szFilename;
