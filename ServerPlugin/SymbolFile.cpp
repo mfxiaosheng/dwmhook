@@ -7,7 +7,7 @@
 #pragma comment(lib,"Ole32.lib")
 #pragma comment(lib,"OleAut32.lib")
 
-#define ___DEBUG 0
+#define ___DEBUG 1
 #if ___DEBUG
 #define wprintf
 #endif // ___DEBUG
