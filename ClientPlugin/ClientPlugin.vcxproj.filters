@@ -21,10 +21,7 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Callback.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SymbolFile.h">
+    <ClInclude Include="SharedIO.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,12 +32,12 @@
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SymbolFile.cpp">
+    <ClCompile Include="SharedIO.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ServerPlugin.def">
+    <None Include="ClientPlugin.def">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

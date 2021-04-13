@@ -332,7 +332,7 @@ UINT WINAPI MainThread1(PVOID)
 	DWORD64 dwoffset = (*((DWORD*)(pvftable + 3)));
 	pvftable = dwoffset + 7 + pvftable;
 
-	pvftable = GetVtable();
+	//pvftable = GetVtable();
 	std::vector<LPVOID> list;
 	//AddToLog("GetVtable 0x%p\n", GetVtable());
 	MemoryScanEx(GetCurrentProcess(), (BYTE*)&pvftable, 8, list);
