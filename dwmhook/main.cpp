@@ -212,7 +212,7 @@ void DrawEverything( IDXGISwapChain* pDxgiSwapChain )
 		render.RenderText( L"she been bouncing on my lap lap lap", 10.f, 10.f, -1, false, false );
 		render.RenderText ( L"we are obama gaming.", 10.f, 50.f, -1, false, true );
 
-		render.RenderText(L"catjpg on top", 700.f, 600.f, 0xFFFFFFFF, false, true);
+		render.RenderText(L"catjpg on top", 700.f, 600.f, 0xffDB6D24, false, true);
 		render.EndScene();
 	}
 }
@@ -238,9 +238,14 @@ typedef  __int64 (*__fastcall pf)(__int64 a1, char a2, int a3, signed int a4, __
 pf a;
 
 //return CDXGISwapChain::PresentMultiplaneOverlay(*(_QWORD *)(a1 + 64) + 120i64, a2, a3, a4, a5, a6, a7);
+bool init = false;
 __int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signed int a4, __int64 a5, unsigned int a6, int* a7)
 {
-	
+	if (!init)
+	{
+		AddToLog("进入绘制函数");
+		init = true;
+	}
 	IDXGISwapChain* pDxgiSwapChain = NULL;
 	pDxgiSwapChain =(IDXGISwapChain*)(*(__int64*)(a1 + 64) + 120);
 	DrawEverything(pDxgiSwapChain);
@@ -249,51 +254,11 @@ __int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signe
 }
 
 
- DWORD64 GetVtable()
- {
- 	DXGI_SWAP_CHAIN_DESC sd;
- 	ZeroMemory(&sd, sizeof(sd));
- 	sd.BufferCount = 1;
- 	sd.BufferDesc.Width = 640;
- 	sd.BufferDesc.Height = 480;
- 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
- 	sd.BufferDesc.RefreshRate.Numerator = 60;
- 	sd.BufferDesc.RefreshRate.Denominator = 1;
- 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
- 	sd.OutputWindow = GetDesktopWindow();
- 	sd.SampleDesc.Count = 1;
- 	sd.SampleDesc.Quality = 0;
- 	sd.Windowed = TRUE;
  
- 	D3D_FEATURE_LEVEL  FeatureLevelsRequested = D3D_FEATURE_LEVEL_11_0;
- 	UINT               numLevelsRequested = 1;
- 	D3D_FEATURE_LEVEL  FeatureLevelsSupported;
- 	HRESULT hr;
- 	IDXGISwapChain* g_pSwapChain;
- 	ID3D11Device* g_pd3dDevice;
- 	ID3D11DeviceContext* g_pImmediateContext;
- 	if (FAILED(hr = D3D11CreateDeviceAndSwapChain(NULL,
- 		D3D_DRIVER_TYPE_HARDWARE,
- 		NULL,
- 		0,
- 		&FeatureLevelsRequested,
- 		1,
- 		D3D11_SDK_VERSION,
- 		&sd,
- 		&g_pSwapChain,
- 		&g_pd3dDevice,
- 		&FeatureLevelsSupported,
- 		&g_pImmediateContext)))
- 	{
- 		return hr;
- 	}
- 
- 	return *(DWORD64*)g_pSwapChain;
- }
 
 LPVOID tempbuff = NULL;
 SharedIO shared;
-#define ___DEBUG
+
 UINT WINAPI MainThread1(PVOID)
 {
 	AddToLog("开始");
@@ -339,7 +304,7 @@ UINT WINAPI MainThread1(PVOID)
 			
 			std::vector<LPVOID> list;
 			VftableHook<PDWORD64> vftable;
-			pvftable = (DWORD64)GetModuleHandleA("dxgi.dll");
+			DWORD64 pvftable = (DWORD64)GetModuleHandleA("dxgi.dll");
 			pvftable += shared.shared_mem_->symbol_offset;
 			MemoryScanEx(GetCurrentProcess(), (BYTE*)&pvftable, 8, list);
 			AddToLog("vftable:%08X", pvftable);
@@ -358,41 +323,6 @@ UINT WINAPI MainThread1(PVOID)
 		}
 	}
 
-
-
-	//DWORD64 pvftable = FindPattern("dxgi.dll", PBYTE("\x48\x8D\x05\x00\x00\x00\x00\x49\x89\x46\x00\x49\x89\x7E\x00\x49\x89\x76\x00\x49\x8B\xC6"), "xxx????xxx?xxx?xxx?xxx");
-	//DWORD64 pvftable = GetVtable();
-	
-	if (pvftable == NULL)
-	{
-		AddToLog("pvftable == NULL");
-		return 0;
-	}
-	
-	VftableHook<PDWORD64> vftable;
-//	DWORD64 dwoffset = (*((DWORD*)(pvftable + 3)));
-	pvftable = dwoffset + 7 + pvftable;
-
-	
-	std::vector<LPVOID> list;
-	//AddToLog("GetVtable 0x%p\n", GetVtable());
-	MemoryScanEx(GetCurrentProcess(), (BYTE*)&pvftable, 8, list);
-
-
-
-	for (auto l : list)//过滤掉用来查找的地址,这里还需要改进。不能输出虚表的地址不然会搜索不到正确的地址
-	{
-		if (l != &pvftable)
-		{
-			AddToLog("list 0x%p\n", l);
-			//MessageBoxA(0, "遍历对象", 0, 0);
-			a = (pf)vftable.Hook((PDWORD64)l, 23, (PDWORD64)hkPresentMultiplaneOverlay);
-		}
-
-	}
-
-
-	AddToLog("hooked!\n");
 	return 0;
 }
 	

@@ -27,6 +27,9 @@ using namespace DirectX;
 #pragma comment( lib, "d3d11" )
 #pragma comment( lib, "dcomp" )
 #pragma comment( lib, "dwrite" )
+#pragma comment( lib, "Gdi32.lib" )
+#pragma comment(lib,"Advapi32.lib")
+#pragma comment(lib,"User32.lib")
 #ifdef _DEBUG
 #pragma comment( lib, "minhook-debug.lib" )
 #else

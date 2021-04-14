@@ -1,6 +1,6 @@
 #pragma once
 #include <windows.h>
-
+#include "log.h"
 template <typename T>
 class VftableHook {
 
@@ -41,7 +41,7 @@ public:
 			this->is_hook = true;
 		}
 		else
-			MessageBoxA(0, "内存不可访问", 0, 0);
+			AddToLog(0, "内存不可访问", 0, 0);
 
 		return retaddr;
 	}
