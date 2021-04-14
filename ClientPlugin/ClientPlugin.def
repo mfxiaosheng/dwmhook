@@ -1,1 +1,3 @@
 EXPORTS
+GetSymbolSig
+SetSymbolOffset

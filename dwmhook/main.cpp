@@ -3,6 +3,9 @@
 #include "VftableHk.h"
 #include "ReflectiveDll/ReflectiveDLLInjection.h"
 #include <vector>
+#include "SharedIO.h"
+#include "PdbFile.h"
+#include "log.h"
 //#include <d3d10_1.h>
 //#pragma comment( lib, "d3d11.lib" )
 ID3D11Device* pD3DXDevice = nullptr;
@@ -12,7 +15,7 @@ ID3D11RenderTargetView* pRenderTarget = nullptr;
 
 IFW1Factory* pFontFactory = nullptr;
 IFW1FontWrapper* pFontWrapper = nullptr;
-void AddToLog(const char* fmt, ...);
+
 BOOL bDataCompare( const BYTE* pData, const BYTE* bMask, const char* szMask )
 {
 	for ( ; *szMask; ++szMask, ++pData, ++bMask )
@@ -85,34 +88,7 @@ DWORD64 FindPattern( const char* szModule, BYTE* bMask, const char* szMask )
 	return NULL;
 }
 
-void AddToLog( const char* fmt, ... )
-{
-	
-	va_list va;
-	va_start(va, fmt);
 
-	char buff[1024]{ };
-	vsnprintf_s(buff, sizeof(buff), fmt, va);
-
-	va_end(va);
-
-	FILE* f = nullptr;
-	fopen_s(&f, LOG_FILE_PATH, "a");
-
-	if (!f)
-	{
-		char szDst[256];
-		sprintf_s(szDst, "Failed to create file %d", GetLastError());
-		OutputDebugStringA(buff);
-		//MessageBoxA(0, buff, 0, 0);
-		return;
-	}
-
-	OutputDebugStringA(buff);
-	fprintf_s(f, buff);
-	fclose(f);
-	
-}
 
 void DrawEverything( IDXGISwapChain* pDxgiSwapChain )
 {
@@ -316,10 +292,75 @@ __int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signe
  }
 
 LPVOID tempbuff = NULL;
+SharedIO shared;
+#define ___DEBUG
 UINT WINAPI MainThread1(PVOID)
 {
 	AddToLog("开始");
+
+#ifdef ___DEBUG
 	DWORD64 pvftable = FindPattern("dxgi.dll", PBYTE("\x48\x8D\x05\x00\x00\x00\x00\x49\x89\x46\x00\x49\x89\x7E\x00\x49\x89\x76\x00\x49\x8B\xC6"), "xxx????xxx?xxx?xxx?xxx");
+	//DWORD64 pvftable = GetVtable();
+
+	if (pvftable == NULL)
+	{
+		AddToLog("pvftable == NULL");
+		return 0;
+	}
+	DWORD64 dwoffset = (*((DWORD*)(pvftable + 3)));
+	pvftable = dwoffset + 7 + pvftable;
+
+	AddToLog("vftable:%08X", pvftable);
+#endif // ___DEBUG
+
+
+
+
+	PdbFile pdb;
+	char sig_buff[100] = { 0 };
+	if (pdb.ReadSig((char*)"dxgi.dll", sig_buff) == false)
+	{
+		AddToLog("ReadSig error");
+		return 0;
+	}
+	if (shared.shared_mem_ == NULL)
+	{
+		AddToLog("shared mem  = NULL");
+		return 0;
+	}
+	strcpy(shared.shared_mem_->symbol_sig, sig_buff);
+	AddToLog("sig:%s",shared.shared_mem_->symbol_sig);
+	while (true)
+	{
+		Sleep(100);
+		if (shared.shared_mem_->symbol_offset != 0)
+		{
+			AddToLog("symbol offset:%X", shared.shared_mem_->symbol_offset);
+			
+			std::vector<LPVOID> list;
+			VftableHook<PDWORD64> vftable;
+			pvftable = (DWORD64)GetModuleHandleA("dxgi.dll");
+			pvftable += shared.shared_mem_->symbol_offset;
+			MemoryScanEx(GetCurrentProcess(), (BYTE*)&pvftable, 8, list);
+			AddToLog("vftable:%08X", pvftable);
+			for (auto l : list)//过滤掉用来查找的地址,这里还需要改进。不能输出虚表的地址不然会搜索不到正确的地址
+			{
+				if (l != &pvftable)
+				{
+					AddToLog("list 0x%p\n", l);
+					//MessageBoxA(0, "遍历对象", 0, 0);
+					a = (pf)vftable.Hook((PDWORD64)l, 23, (PDWORD64)hkPresentMultiplaneOverlay);
+				}
+
+			}
+			AddToLog("hooked!\n");
+			return 0;
+		}
+	}
+
+
+
+	//DWORD64 pvftable = FindPattern("dxgi.dll", PBYTE("\x48\x8D\x05\x00\x00\x00\x00\x49\x89\x46\x00\x49\x89\x7E\x00\x49\x89\x76\x00\x49\x8B\xC6"), "xxx????xxx?xxx?xxx?xxx");
 	//DWORD64 pvftable = GetVtable();
 	
 	if (pvftable == NULL)
@@ -329,10 +370,10 @@ UINT WINAPI MainThread1(PVOID)
 	}
 	
 	VftableHook<PDWORD64> vftable;
-	DWORD64 dwoffset = (*((DWORD*)(pvftable + 3)));
+//	DWORD64 dwoffset = (*((DWORD*)(pvftable + 3)));
 	pvftable = dwoffset + 7 + pvftable;
 
-	//pvftable = GetVtable();
+	
 	std::vector<LPVOID> list;
 	//AddToLog("GetVtable 0x%p\n", GetVtable());
 	MemoryScanEx(GetCurrentProcess(), (BYTE*)&pvftable, 8, list);

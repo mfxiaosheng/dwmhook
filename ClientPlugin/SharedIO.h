@@ -2,6 +2,7 @@
 #include <windows.h>
 
 #define  SHARED_SIZE 4096*100
+#define AddToLog()
 
 struct SharedMem
 {
