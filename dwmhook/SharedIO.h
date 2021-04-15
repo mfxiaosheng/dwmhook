@@ -3,6 +3,37 @@
 
 #define  SHARED_SIZE 4096*100
 
+struct Point
+{
+	int x;
+	int y;
+};
+
+struct DLine
+{
+	Point start;
+	Point end;
+	ULONG rgb;
+};
+
+struct DLine
+{
+	Point start;
+	Point end;
+	ULONG rgb;
+};
+
+
+
+
+
+
+
+
+
+
+
+
 struct SharedMem
 {
 	char symbol_sig[100];
