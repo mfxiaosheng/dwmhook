@@ -6,6 +6,7 @@
 #include "SharedIO.h"
 #include "PdbFile.h"
 #include "log.h"
+#include "IDraw.h"
 //#include <d3d10_1.h>
 //#pragma comment( lib, "d3d11.lib" )
 ID3D11Device* pD3DXDevice = nullptr;
@@ -226,29 +227,54 @@ __int64 __fastcall hkPresentMPO( void* thisptr, IDXGISwapChain* pDxgiSwapChain, 
 	return oPresentMPO( thisptr, pDxgiSwapChain, a3, a4, a5, a6, a7, a8 );
 }
 
-using PresentDWM_ = __int64( __fastcall* )( void*, IDXGISwapChain*, unsigned int, unsigned int, const struct tagRECT*, unsigned int, const struct DXGI_SCROLL_RECT*, unsigned int, struct IDXGIResource*, unsigned int );
+using PresentDWM_ = __int64( __fastcall* )(__int64 thisptr, IDXGISwapChain*, unsigned int, unsigned int, const struct tagRECT*, unsigned int, const struct DXGI_SCROLL_RECT*, unsigned int, struct IDXGIResource* );
 PresentDWM_ oPresentDWM = NULL;
-
-__int64 __fastcall hkPresentDWM( void* thisptr, IDXGISwapChain* pDxgiSwapChain, unsigned int a3, unsigned int a4, const struct tagRECT* a5, unsigned int a6, const struct DXGI_SCROLL_RECT* a7, unsigned int a8, struct IDXGIResource* a9, unsigned int a10 )
-{
-	DrawEverything( pDxgiSwapChain );
-	return oPresentDWM( thisptr, pDxgiSwapChain, a3, a4, a5, a6, a7, a8, a9, a10 );
-}
-typedef  __int64 (*__fastcall pf)(__int64 a1, char a2, int a3, signed int a4, __int64 a5, unsigned int a6, int* a7);
-pf a;
-
-//return CDXGISwapChain::PresentMultiplaneOverlay(*(_QWORD *)(a1 + 64) + 120i64, a2, a3, a4, a5, a6, a7);
+//__int64 __fastcall hkPresentDWM( void* thisptr, IDXGISwapChain* pDxgiSwapChain, unsigned int a3, unsigned int a4, const struct tagRECT* a5, unsigned int a6, const struct DXGI_SCROLL_RECT* a7, unsigned int a8, struct IDXGIResource* a9, unsigned int a10 )
 bool init = false;
-__int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signed int a4, __int64 a5, unsigned int a6, int* a7)
+
+__int64 __fastcall hkPresentDWM(__int64 thisptr, IDXGISwapChain* a2, unsigned int a3, unsigned int a4, const struct tagRECT* a5, unsigned int a6, const struct DXGI_SCROLL_RECT* a7, unsigned int a8, struct IDXGIResource* a9 )
 {
 	if (!init)
 	{
 		AddToLog("进入绘制函数");
 		init = true;
 	}
+
 	IDXGISwapChain* pDxgiSwapChain = NULL;
-	pDxgiSwapChain =(IDXGISwapChain*)(*(__int64*)(a1 + 64) + 120);
-	DrawEverything(pDxgiSwapChain);
+	//pDxgiSwapChain = (IDXGISwapChain*)(*(__int64*)(thisptr + 64) + 120);
+	DrawEverything((IDXGISwapChain*)thisptr);
+	return oPresentDWM( thisptr, pDxgiSwapChain, a3, a4, a5, a6, a7, a8, a9 );
+}
+
+
+
+//__int64 __fastcall CDXGISwapChain::PresentDWM(CDXGISwapChain* this, int a2, int a3, unsigned int a4, const struct tagRECT* a5, unsigned int a6, const struct DXGI_SCROLL_RECT* a7, struct IDXGIResource* a8, unsigned int a9)
+
+
+
+typedef  __int64 (*__fastcall pf)(__int64 a1, char a2, int a3, signed int a4, __int64 a5, unsigned int a6, int* a7);
+pf a;
+
+//return CDXGISwapChain::PresentMultiplaneOverlay(*(_QWORD *)(a1 + 64) + 120i64, a2, a3, a4, a5, a6, a7);
+IDraw idraw;
+__int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signed int a4, __int64 a5, unsigned int a6, int* a7)
+{
+
+	IDXGISwapChain* pDxgiSwapChain = NULL;
+	pDxgiSwapChain = (IDXGISwapChain*)(*(__int64*)(a1 + 64) + 120);
+	if (!init)
+	{
+		AddToLog("进入绘制函数");
+	}
+
+
+	if (idraw.Init(pDxgiSwapChain))
+	{
+		idraw.SetHwnd((HWND)68104);
+		idraw.Draw();
+	}
+
+	//DrawEverything(pDxgiSwapChain);
 	
 	return a(a1, a2, a3, a4, a5, a6, a7);
 }
@@ -303,7 +329,7 @@ UINT WINAPI MainThread1(PVOID)
 			AddToLog("symbol offset:%X", shared.shared_mem_->symbol_offset);
 			
 			std::vector<LPVOID> list;
-			VftableHook<PDWORD64> vftable;
+			VftableHook<PDWORD64> vftable,vftable1;
 			DWORD64 pvftable = (DWORD64)GetModuleHandleA("dxgi.dll");
 			pvftable += shared.shared_mem_->symbol_offset;
 			MemoryScanEx(GetCurrentProcess(), (BYTE*)&pvftable, 8, list);
@@ -315,6 +341,7 @@ UINT WINAPI MainThread1(PVOID)
 					AddToLog("list 0x%p\n", l);
 					//MessageBoxA(0, "遍历对象", 0, 0);
 					a = (pf)vftable.Hook((PDWORD64)l, 23, (PDWORD64)hkPresentMultiplaneOverlay);
+					oPresentDWM =  (PresentDWM_)vftable1.Hook((PDWORD64)l, 16, (PDWORD64)hkPresentDWM);
 				}
 
 			}
