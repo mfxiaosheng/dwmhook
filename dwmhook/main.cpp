@@ -3,7 +3,6 @@
 #include "VftableHk.h"
 #include "ReflectiveDll/ReflectiveDLLInjection.h"
 #include <vector>
-#include "SharedIO.h"
 #include "PdbFile.h"
 #include "log.h"
 #include "IDraw.h"
@@ -265,12 +264,13 @@ __int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signe
 	if (!init)
 	{
 		AddToLog("进入绘制函数");
+		init = true;
 	}
 
 
 	if (idraw.Init(pDxgiSwapChain))
 	{
-		idraw.SetHwnd((HWND)68104);
+		idraw.SetHwnd((HWND)0);
 		idraw.Draw();
 	}
 

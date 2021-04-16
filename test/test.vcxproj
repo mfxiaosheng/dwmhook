@@ -219,6 +219,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Callback.h" />
+    <ClInclude Include="imguiren.h" />
     <ClInclude Include="regs.h" />
     <ClInclude Include="SharedIO.h" />
     <ClInclude Include="SymbolFile.h" />

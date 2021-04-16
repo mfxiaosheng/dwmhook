@@ -19,6 +19,9 @@
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <d3dcompiler.h>
+#include "SharedIO.h"
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
 
 using namespace DirectX;
 

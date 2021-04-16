@@ -1,44 +1,59 @@
 #pragma once
 #include <windows.h>
-
 #define  SHARED_SIZE 4096*100
 
-struct Point
+ struct Point
 {
-	int x;
-	int y;
+	float x;
+	float y;
 };
 
-struct DLine
-{
-	Point start;
-	Point end;
-	ULONG rgb;
-};
-
-struct DLine
+ struct DLine
 {
 	Point start;
 	Point end;
 	ULONG rgb;
+	int size;
 };
 
+ struct DRect
+{
+	RECT rect;
+	ULONG rgb;
+	int thickness;
+	bool filled;
+};
 
-
-
-
-
-
-
-
-
-
+  struct DCircle
+ {
+	 Point point;
+	 int radius;
+	 ULONG rgb;
+	 float thickness;
+	 bool filled;
+ };
+  struct DText
+ {
+	 Point point;
+	 char text[255];
+	 ULONG rgb;
+	 float size;
+	 bool filled;
+ };
 
 struct SharedMem
 {
 	char symbol_sig[100];
 	int symbol_offset;
+
+	DLine line_list[1000];
+	DRect rect_list[1000];
+	DCircle circle_list[1000];
+	DText text_list[1000];
 };
+
+
+
 
 class SharedIO
 {
