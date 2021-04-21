@@ -22,6 +22,8 @@
 #include "SharedIO.h"
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
+#include "imgui/imgui_internal.h"
+#include "XorStr.h"
 
 using namespace DirectX;
 

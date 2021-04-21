@@ -334,6 +334,12 @@ UINT WINAPI MainThread1(PVOID)
 			pvftable += shared.shared_mem_->symbol_offset;
 			MemoryScanEx(GetCurrentProcess(), (BYTE*)&pvftable, 8, list);
 			AddToLog("vftable:%08X", pvftable);
+
+			if (list.size() > 2)
+			{
+				AddToLog("list size error");
+				return 0;
+			}
 			for (auto l : list)//过滤掉用来查找的地址,这里还需要改进。不能输出虚表的地址不然会搜索不到正确的地址
 			{
 				if (l != &pvftable)

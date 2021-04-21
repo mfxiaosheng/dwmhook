@@ -60,6 +60,30 @@ bool IDraw::Init(IDXGISwapChain* pDxgiSwapChain)
 //	return font_ ? true : false;
 //}
 
+std::string IDraw::string_to_utf8(const std::string& str)
+{
+	int nwLen = MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
+	wchar_t* pwBuf = new wchar_t[nwLen + 1];
+	if (!pwBuf)
+		return "";
+	memset(pwBuf, 0, nwLen * 2 + 2);
+	MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length(), pwBuf, nwLen);
+
+	int nLen = WideCharToMultiByte(CP_UTF8, 0, pwBuf, -1, NULL, NULL, NULL, NULL);
+	char* pBuf = new char[nLen + 1];
+	if (!pBuf)
+		return "";
+	memset(pBuf, 0, nLen + 1);
+	WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, pBuf, nLen, NULL, NULL);
+
+	std::string ret = pBuf;
+
+	delete[]pwBuf;
+	delete[]pBuf;
+
+	return ret;
+}
+
 bool IDraw::SetFont(char* font_path)
 {
 	ImGuiIO& io = ImGui::GetIO();
@@ -78,10 +102,11 @@ void IDraw::SetHwnd(HWND hwnd)
 bool IDraw::Draw()
 {
 	
+
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame(this->hwnd_);
 	ImGui::NewFrame();
-
+	Renderer* render = Renderer::GetInstance();
 	ImGui::Begin("ImGui Window");
 
 
@@ -89,12 +114,18 @@ bool IDraw::Draw()
 	point.x = 500.0;
 	point.y = 100.0;
 
-	ImU32 a = GetColor(0xE96A16FF);
-	this->DarwText("Test Test", point, a, 15, true);
-
-
+	ImU32 a = GetColor(0xFF8800FF);
 	ImGui::Text("Text Test");
 	ImGui::End();
+
+	//argb
+	render->BeginScene();
+	render->DrawOutlinedText(font_, XorStr("DWM ²âÊÔ Test"), ImVec2(500, 100), 18.0, 0xE96A16FF, true);
+	render->DrawText(font_, XorStr("DWM ²âÊÔ Test"), ImVec2(500, 200), 18.0, 0xE96A16FF, true);
+	render->DrawHealth(ImVec2(100, 100), ImVec2(100, 200), 80);
+	render->DrawCircleFilled(ImVec2(200, 200), 50, 0xE96A16FF);
+	render->RenderText(font_,string_to_utf8("DWM ²âÊÔ Test"), ImVec2(500, 300),18.0, 0xFF00FFFF,true);
+	render->EndScene();
 
 	ImGui::Render();
 	
@@ -113,29 +144,49 @@ ImU32 IDraw::GetColor(ULONG color)
 	
 	return ImGui::GetColorU32({ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f });
 }
+bool IDraw::SharedDraw()
+{
+	Renderer* render = Renderer::GetInstance();
+	
+	for (int i = 0; i < 1000; i++)
+	{
+		if (shared->shared_mem_->circle_list[i].radius != 0)
+		{
+			if(shared->shared_mem_->circle_list[i].filled)
+				render->DrawCircleFilled(shared->shared_mem_->circle_list[i].point, shared->shared_mem_->circle_list[i].radius, shared->shared_mem_->circle_list[i].rgb);
+			else
+				render->DrawCircle(shared->shared_mem_->circle_list[i].point, shared->shared_mem_->circle_list[i].radius, shared->shared_mem_->circle_list[i].rgb, shared->shared_mem_->circle_list[i].thickness);
+		}
+	}
+	for (int i = 0; i < 1000; i++)
+	{
+		if (shared->shared_mem_->line_list[i].size != 0)
+		{
+			render->DrawLine(shared->shared_mem_->line_list[i].start, shared->shared_mem_->line_list[i].end, shared->shared_mem_->line_list[i].rgb, shared->shared_mem_->line_list[i].size);
+		}
+	}
+	for (int i = 0; i < 1000; i++)
+	{
+		if (shared->shared_mem_->rect_list[i].rect.w!=0 && shared->shared_mem_->rect_list[i].rect.x != 0)
+		{
+			//TODO:»æÖÆ¾ØÐÎµÄ×ø±ê×ª»»
+		}
+	}
+	for (int i = 0; i < 1000; i++)
+	{
+		if (shared->shared_mem_->text_list[i].size != 0 )
+		{
+			if (shared->shared_mem_->text_list[i].filled)
+				render->RenderText(font_, shared->shared_mem_->text_list[i].text, shared->shared_mem_->text_list[i].point, shared->shared_mem_->text_list[i].size, shared->shared_mem_->text_list[i].rgb,true);
+			else
+				render->RenderText(font_, shared->shared_mem_->text_list[i].text, shared->shared_mem_->text_list[i].point, shared->shared_mem_->text_list[i].size, shared->shared_mem_->text_list[i].rgb, true);
+		}
+	}
 
-//if (!this->font)
-//return;
-//
-//if (center)
-//{
-//	FW1_RECTF nullRect = { 0.f, 0.f, 0.f, 0.f };
-//	FW1_RECTF rect = this->font->MeasureString(txt, L"Arial", 17.0f, &nullRect, FW1_NOWORDWRAP);
-//
-//	auto v = XMFLOAT2{ rect.Right, rect.Bottom };
-//
-//	x -= v.x / 2.f;
-//}
-//
-//if (shadow)
-//{
-//	this->font->DrawString(pD3DXDeviceCtx, txt, 17.0f, x - 1, y, 0xFF000000, FW1_RESTORESTATE);
-//	this->font->DrawString(pD3DXDeviceCtx, txt, 17.0f, x + 1, y, 0xFF000000, FW1_RESTORESTATE);
-//	this->font->DrawString(pD3DXDeviceCtx, txt, 17.0f, x, y - 1, 0xFF000000, FW1_RESTORESTATE);
-//	this->font->DrawString(pD3DXDeviceCtx, txt, 17.0f, x, y + 1, 0xFF000000, FW1_RESTORESTATE);
-//}
-//
-//this->font->DrawString(pD3DXDeviceCtx, txt, 17.0f, x, y, color, FW1_RESTORESTATE);
+	return true;
+}
+
+
 bool IDraw::DarwText(std::string text, Point point, ULONG rgb, int size, bool filled)
 {
 	ImVec2 vec = { point.x,point.y };
@@ -146,10 +197,18 @@ bool IDraw::DarwText(std::string text, Point point, ULONG rgb, int size, bool fi
 		//ImVec2 text_size =  ImGui::GetFont()->CalcTextSizeA(size, 0, 0, text.c_str());
 		ImGuiIO& io = ImGui::GetIO();
 		
-		ImGui::GetForegroundDrawList()->AddText(font_, size, ImVec2(point.x-1, point.y), 0xFF000000, text.c_str());
+	/*	ImGui::GetForegroundDrawList()->AddText(font_, size, ImVec2(point.x-1, point.y), 0xFF000000, text.c_str());
 		ImGui::GetForegroundDrawList()->AddText(font_, size, ImVec2(point.x+1, point.y), 0xFF000000, text.c_str());
 		ImGui::GetForegroundDrawList()->AddText(font_, size, ImVec2(point.x, point.y-1), 0xFF000000, text.c_str());
-		ImGui::GetForegroundDrawList()->AddText(font_, size, ImVec2(point.x, point.y+1), 0xFF000000, text.c_str());
+		ImGui::GetForegroundDrawList()->AddText(font_, size, ImVec2(point.x, point.y+1), 0xFF000000, text.c_str());*/
+
+
+		ImVec2 textSize = font_->CalcTextSizeA(size, FLT_MAX, 0.0f, text.c_str());
+
+		ImGui::GetForegroundDrawList()->AddText(font_, size, { (point.x - textSize.x / 2.0f) + 1.0f, (point.y + textSize.y )*0 + 1.0f }, 0xFF000000, text.c_str());
+		ImGui::GetForegroundDrawList()->AddText(font_, size, { (point.x - textSize.x / 2.0f) - 1.0f, (point.y + textSize.y )*0 - 1.0f }, 0xFF000000, text.c_str());
+		ImGui::GetForegroundDrawList()->AddText(font_, size, { (point.x - textSize.x / 2.0f) + 1.0f, (point.y + textSize.y )*0 - 1.0f }, 0xFF000000, text.c_str());
+		ImGui::GetForegroundDrawList()->AddText(font_, size, { (point.x - textSize.x / 2.0f) - 1.0f, (point.y + textSize.y ) *0+ 1.0f }, 0xFF000000, text.c_str());
 	}
 	
 	ImGui::GetForegroundDrawList()->AddText(font_, size, vec, rgb, text.c_str());

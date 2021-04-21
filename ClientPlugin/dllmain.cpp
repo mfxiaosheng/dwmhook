@@ -31,6 +31,50 @@ extern "C" __declspec(dllexport) BOOL WINAPI SetSymbolOffset(int offset)
 }
 
 
+extern "C" __declspec(dllexport) BOOL WINAPI DrawText(char* text,ImVec2& point,float size,int col,bool filled)
+{
+    if (shared.shared_mem_ == NULL)
+    {
+        return FALSE;
+    }
+
+    if (shared.shared_mem_->text_num >=1000)
+    {
+        return FALSE;
+    }
+    shared.shared_mem_->text_list[shared.shared_mem_->text_num].filled = filled;
+    shared.shared_mem_->text_list[shared.shared_mem_->text_num].point = point;
+    shared.shared_mem_->text_list[shared.shared_mem_->text_num].rgb = col;
+    shared.shared_mem_->text_list[shared.shared_mem_->text_num].size = size;
+    strcpy(shared.shared_mem_->text_list[shared.shared_mem_->text_num].text, text);
+    shared.shared_mem_->text_num++;
+    return TRUE;
+}
+
+extern "C" __declspec(dllexport) BOOL WINAPI DrawRircle(ImVec2 & point, float radius, int col,float thickness, bool filled)
+{
+    if (shared.shared_mem_ == NULL)
+    {
+        return FALSE;
+    }
+
+    if (shared.shared_mem_->circle_num >= 1000)
+    {
+        return FALSE;
+    }
+    shared.shared_mem_->circle_list[shared.shared_mem_->circle_num].filled = filled;
+    shared.shared_mem_->circle_list[shared.shared_mem_->circle_num].point = point;
+    shared.shared_mem_->circle_list[shared.shared_mem_->circle_num].rgb = col;
+    shared.shared_mem_->circle_list[shared.shared_mem_->circle_num].radius = radius;
+    shared.shared_mem_->circle_list[shared.shared_mem_->circle_num].thickness = thickness;
+ 
+    shared.shared_mem_->circle_num++;
+    return TRUE;
+}
+
+
+
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved

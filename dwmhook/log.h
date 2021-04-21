@@ -1,3 +1,3 @@
 #pragma once
-#include "includes.hpp"
+#include <Windows.h>
 void AddToLog(const char* fmt, ...);

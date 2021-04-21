@@ -1,4 +1,5 @@
 #include "log.h"
+#include <stdio.h>
 #define LOG_FILE_PATH		"D:\\code\\dwmhook-master\\x64\\Release\\DWM_GAY.log"
 void AddToLog(const char* fmt, ...)
 {

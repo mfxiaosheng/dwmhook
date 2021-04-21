@@ -168,6 +168,7 @@
     <ClCompile Include="ReflectiveDll\ReflectiveDll.cpp" />
     <ClCompile Include="ReflectiveDll\ReflectiveLoader.cpp" />
     <ClCompile Include="render.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="save_state.cpp" />
     <ClCompile Include="SharedIO.cpp" />
     <ClCompile Include="VftableHk.cpp" />
@@ -206,9 +207,11 @@
     <ClInclude Include="ReflectiveDll\ReflectiveDLLInjection.h" />
     <ClInclude Include="ReflectiveDll\ReflectiveLoader.h" />
     <ClInclude Include="render.hpp" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="save_state.hpp" />
     <ClInclude Include="SharedIO.h" />
     <ClInclude Include="VftableHk.h" />
+    <ClInclude Include="XorStr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

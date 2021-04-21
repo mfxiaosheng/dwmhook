@@ -2,6 +2,7 @@
 #include "includes.hpp"
 #include <string.h>
 #include <string>
+#include "Renderer.h"
 class IDraw
 {
 public:
@@ -14,8 +15,10 @@ public:
 	bool Draw();
 	ImU32 GetColor(ULONG color);
 	bool DarwText(std::string text,Point point,ULONG rgb,int size,bool filled);
+	bool SharedDraw();
+	std::string string_to_utf8(const std::string& str);
 public:
-	//SharedIO shared;
+	SharedIO* shared;
 	HWND hwnd_;
 	bool is_init_;
 	ID3D11Device* pD3DXDevice;

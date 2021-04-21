@@ -1,5 +1,6 @@
 #pragma once
 #include <windows.h>
+#include "includes.hpp"
 #define  SHARED_SIZE 4096*100
 
  struct Point
@@ -10,15 +11,15 @@
 
  struct DLine
 {
-	Point start;
-	Point end;
+	ImVec2 start;
+	ImVec2 end;
 	ULONG rgb;
 	int size;
 };
 
  struct DRect
 {
-	RECT rect;
+	ImVec4 rect;
 	ULONG rgb;
 	int thickness;
 	bool filled;
@@ -26,7 +27,7 @@
 
   struct DCircle
  {
-	 Point point;
+	 ImVec2 point;
 	 int radius;
 	 ULONG rgb;
 	 float thickness;
@@ -34,7 +35,7 @@
  };
   struct DText
  {
-	 Point point;
+	 ImVec2 point;
 	 char text[255];
 	 ULONG rgb;
 	 float size;
