@@ -230,7 +230,9 @@ using PresentDWM_ = __int64( __fastcall* )(__int64 thisptr, IDXGISwapChain*, uns
 PresentDWM_ oPresentDWM = NULL;
 //__int64 __fastcall hkPresentDWM( void* thisptr, IDXGISwapChain* pDxgiSwapChain, unsigned int a3, unsigned int a4, const struct tagRECT* a5, unsigned int a6, const struct DXGI_SCROLL_RECT* a7, unsigned int a8, struct IDXGIResource* a9, unsigned int a10 )
 bool init = false;
-
+LPVOID tempbuff = NULL;
+SharedIO shared;
+IDraw idraw;
 __int64 __fastcall hkPresentDWM(__int64 thisptr, IDXGISwapChain* a2, unsigned int a3, unsigned int a4, const struct tagRECT* a5, unsigned int a6, const struct DXGI_SCROLL_RECT* a7, unsigned int a8, struct IDXGIResource* a9 )
 {
 	if (!init)
@@ -240,9 +242,14 @@ __int64 __fastcall hkPresentDWM(__int64 thisptr, IDXGISwapChain* a2, unsigned in
 	}
 
 	IDXGISwapChain* pDxgiSwapChain = NULL;
-	//pDxgiSwapChain = (IDXGISwapChain*)(*(__int64*)(thisptr + 64) + 120);
-	DrawEverything((IDXGISwapChain*)thisptr);
-	return oPresentDWM( thisptr, pDxgiSwapChain, a3, a4, a5, a6, a7, a8, a9 );
+	pDxgiSwapChain = (IDXGISwapChain*)(*(__int64*)(thisptr + 64));
+	//if (idraw.Init((IDXGISwapChain*)thisptr))
+	//{
+	//	idraw.SetHwnd((HWND)0);
+	//	idraw.Draw();
+	//}
+	DrawEverything((IDXGISwapChain*)pDxgiSwapChain);
+	return oPresentDWM( thisptr, a2, a3, a4, a5, a6, a7, a8, a9 );
 }
 
 
@@ -255,10 +262,10 @@ typedef  __int64 (*__fastcall pf)(__int64 a1, char a2, int a3, signed int a4, __
 pf a;
 
 //return CDXGISwapChain::PresentMultiplaneOverlay(*(_QWORD *)(a1 + 64) + 120i64, a2, a3, a4, a5, a6, a7);
-IDraw idraw;
+
 __int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signed int a4, __int64 a5, unsigned int a6, int* a7)
 {
-
+	idraw.shared = &shared;
 	IDXGISwapChain* pDxgiSwapChain = NULL;
 	pDxgiSwapChain = (IDXGISwapChain*)(*(__int64*)(a1 + 64) + 120);
 	if (!init)
@@ -282,8 +289,7 @@ __int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signe
 
  
 
-LPVOID tempbuff = NULL;
-SharedIO shared;
+
 
 UINT WINAPI MainThread1(PVOID)
 {

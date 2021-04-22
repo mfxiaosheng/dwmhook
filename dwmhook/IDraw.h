@@ -26,5 +26,6 @@ public:
 	ID3D11RenderTargetView* mainRenderTargetView;
 public:
 	ImFont* font_;
+	Renderer* render;
 };
 

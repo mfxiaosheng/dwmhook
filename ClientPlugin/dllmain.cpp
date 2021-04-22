@@ -8,6 +8,10 @@
 
 extern "C" __declspec(dllexport)  char*  WINAPI GetSymbolSig();
 extern "C" __declspec(dllexport) BOOL  WINAPI SetSymbolOffset(int offset);
+extern "C" __declspec(dllexport) BOOL WINAPI DrawString(char* text, ImVec2 & point, float size, int col, bool filled);
+extern "C" __declspec(dllexport) BOOL WINAPI DrawRircle(ImVec2 & point, float radius, int col, float thickness, bool filled);
+extern "C" __declspec(dllexport) BOOL WINAPI DrawLine(ImVec2 & strat, ImVec2 & end, int col, float thickness);
+extern "C" __declspec(dllexport) void DrawBegin();
 SharedIO shared;
 
 extern "C" __declspec(dllexport) char*  WINAPI  GetSymbolSig()
@@ -31,7 +35,7 @@ extern "C" __declspec(dllexport) BOOL WINAPI SetSymbolOffset(int offset)
 }
 
 
-extern "C" __declspec(dllexport) BOOL WINAPI DrawText(char* text,ImVec2& point,float size,int col,bool filled)
+extern "C" __declspec(dllexport) BOOL WINAPI DrawString(char* text,ImVec2& point,float size,int col,bool filled)
 {
     if (shared.shared_mem_ == NULL)
     {
@@ -72,8 +76,37 @@ extern "C" __declspec(dllexport) BOOL WINAPI DrawRircle(ImVec2 & point, float ra
     return TRUE;
 }
 
+extern "C" __declspec(dllexport) BOOL WINAPI DrawLine(ImVec2 & strat, ImVec2 & end, int col, float thickness)
+{
+    if (shared.shared_mem_ == NULL)
+    {
+        return FALSE;
+    }
 
+    if (shared.shared_mem_->line_num >= 1000)
+    {
+        return FALSE;
+    }
+    shared.shared_mem_->line_list[shared.shared_mem_->line_num].start = strat;
+    shared.shared_mem_->line_list[shared.shared_mem_->line_num].end = end;
+    shared.shared_mem_->line_list[shared.shared_mem_->line_num].rgb = col;
+    shared.shared_mem_->line_list[shared.shared_mem_->line_num].thickness = thickness;
+  
 
+    shared.shared_mem_->circle_num++;
+    return TRUE;
+}
+extern "C" __declspec(dllexport) void DrawBegin()
+{
+    if (shared.shared_mem_)
+    {
+       // ZeroMemory(shared.shared_mem_, sizeof(SharedMem));
+        shared.shared_mem_->line_num = 0;
+        shared.shared_mem_->circle_num = 0;
+        shared.shared_mem_->rect_num = 0;
+        shared.shared_mem_->text_num = 0;
+    }
+}
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,

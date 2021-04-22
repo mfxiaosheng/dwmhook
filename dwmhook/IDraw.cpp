@@ -107,6 +107,7 @@ bool IDraw::Draw()
 	ImGui_ImplWin32_NewFrame(this->hwnd_);
 	ImGui::NewFrame();
 	Renderer* render = Renderer::GetInstance();
+	this->render = render;
 	ImGui::Begin("ImGui Window");
 
 
@@ -120,11 +121,13 @@ bool IDraw::Draw()
 
 	//argb
 	render->BeginScene();
-	render->DrawOutlinedText(font_, XorStr("DWM ²âÊÔ Test"), ImVec2(500, 100), 18.0, 0xE96A16FF, true);
-	render->DrawText(font_, XorStr("DWM ²âÊÔ Test"), ImVec2(500, 200), 18.0, 0xE96A16FF, true);
+	render->DrawOutlinedText(font_, string_to_utf8(XorStr("DWM ²âÊÔ Test")), ImVec2(0, 0), 18.0, 0xFF00FFFF, true);
+	/*render->DrawText(font_, XorStr("DWM ²âÊÔ Test"), ImVec2(500, 200), 18.0, 0xE96A16FF, true);
 	render->DrawHealth(ImVec2(100, 100), ImVec2(100, 200), 80);
 	render->DrawCircleFilled(ImVec2(200, 200), 50, 0xE96A16FF);
-	render->RenderText(font_,string_to_utf8("DWM ²âÊÔ Test"), ImVec2(500, 300),18.0, 0xFF00FFFF,true);
+	render->RenderText(font_,string_to_utf8("DWM ²âÊÔ Test"), ImVec2(500, 300),18.0, 0xFF00FFFF,true);*/
+	render->DrawLine(ImVec2(500, 300), ImVec2(700, 300), 0xFF00FFFF,3.0);
+	SharedDraw();
 	render->EndScene();
 
 	ImGui::Render();
@@ -146,9 +149,10 @@ ImU32 IDraw::GetColor(ULONG color)
 }
 bool IDraw::SharedDraw()
 {
-	Renderer* render = Renderer::GetInstance();
 	
-	for (int i = 0; i < 1000; i++)
+	//Renderer* render = Renderer::GetInstance();
+	
+	for (int i = 0; i < shared->shared_mem_->circle_num; i++)
 	{
 		if (shared->shared_mem_->circle_list[i].radius != 0)
 		{
@@ -158,28 +162,28 @@ bool IDraw::SharedDraw()
 				render->DrawCircle(shared->shared_mem_->circle_list[i].point, shared->shared_mem_->circle_list[i].radius, shared->shared_mem_->circle_list[i].rgb, shared->shared_mem_->circle_list[i].thickness);
 		}
 	}
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < shared->shared_mem_->line_num; i++)
 	{
-		if (shared->shared_mem_->line_list[i].size != 0)
+		if (shared->shared_mem_->line_list[i].thickness != 0)
 		{
-			render->DrawLine(shared->shared_mem_->line_list[i].start, shared->shared_mem_->line_list[i].end, shared->shared_mem_->line_list[i].rgb, shared->shared_mem_->line_list[i].size);
+			render->DrawLine(shared->shared_mem_->line_list[i].start, shared->shared_mem_->line_list[i].end, shared->shared_mem_->line_list[i].rgb, shared->shared_mem_->line_list[i].thickness);
 		}
 	}
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < shared->shared_mem_->rect_num; i++)
 	{
 		if (shared->shared_mem_->rect_list[i].rect.w!=0 && shared->shared_mem_->rect_list[i].rect.x != 0)
 		{
 			//TODO:»æÖÆ¾ØÐÎµÄ×ø±ê×ª»»
 		}
 	}
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < shared->shared_mem_->text_num; i++)
 	{
 		if (shared->shared_mem_->text_list[i].size != 0 )
 		{
 			if (shared->shared_mem_->text_list[i].filled)
-				render->RenderText(font_, shared->shared_mem_->text_list[i].text, shared->shared_mem_->text_list[i].point, shared->shared_mem_->text_list[i].size, shared->shared_mem_->text_list[i].rgb,true);
+				render->RenderText(font_, string_to_utf8(shared->shared_mem_->text_list[i].text), shared->shared_mem_->text_list[i].point, shared->shared_mem_->text_list[i].size, shared->shared_mem_->text_list[i].rgb,true);
 			else
-				render->RenderText(font_, shared->shared_mem_->text_list[i].text, shared->shared_mem_->text_list[i].point, shared->shared_mem_->text_list[i].size, shared->shared_mem_->text_list[i].rgb, true);
+				render->RenderText(font_, string_to_utf8(shared->shared_mem_->text_list[i].text), shared->shared_mem_->text_list[i].point, shared->shared_mem_->text_list[i].size, shared->shared_mem_->text_list[i].rgb, true);
 		}
 	}
 

@@ -15,14 +15,14 @@ struct DLine
 	ImVec2 start;
 	ImVec2 end;
 	ULONG rgb;
-	int size;
+	float thickness;
 };
 
 struct DRect
 {
 	ImVec4 rect;
 	ULONG rgb;
-	int thickness;
+	float thickness;
 	bool filled;
 };
 

@@ -18,13 +18,13 @@ SharedIO::SharedIO()
 		sa.nLength = sizeof(SECURITY_ATTRIBUTES);
 		sa.bInheritHandle = FALSE;
 		/* give access to members of administrators group */
-		BOOL success = ConvertStringSecurityDescriptorToSecurityDescriptorA(
+		/*BOOL success = ConvertStringSecurityDescriptorToSecurityDescriptorA(
 			"D:(A;OICI;GA;;;BA)",
 			SDDL_REVISION_1,
 			&(sa.lpSecurityDescriptor),
-			NULL);
+			NULL);*/
 		hmap_ = CreateFileMappingA(INVALID_HANDLE_VALUE, &sa,
-			PAGE_READWRITE | SEC_COMMIT, 0, SHARED_SIZE, "eli");
+			PAGE_READWRITE | SEC_COMMIT, 0, sizeof(SharedMem), "eli");
 		if (!hmap_)
 		{
 			//AddToLog("CreateFileMappingA error %d", GetLastError());

@@ -23,7 +23,7 @@ SharedIO::SharedIO()
 			&(sa.lpSecurityDescriptor),
 			NULL);
 		hmap_ = CreateFileMappingA(INVALID_HANDLE_VALUE, &sa,
-			PAGE_READWRITE | SEC_COMMIT, 0, SHARED_SIZE, "eli");
+			PAGE_READWRITE | SEC_COMMIT, 0, sizeof(SharedMem), "eli");
 		if (!hmap_)
 		{
 			AddToLog("CreateFileMappingA error %d", GetLastError());
