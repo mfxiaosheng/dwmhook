@@ -212,17 +212,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="regs.cpp" />
-    <ClCompile Include="SharedIO.cpp" />
-    <ClCompile Include="SymbolFile.cpp" />
     <ClCompile Include="test.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Callback.h" />
-    <ClInclude Include="imguiren.h" />
-    <ClInclude Include="regs.h" />
-    <ClInclude Include="SharedIO.h" />
-    <ClInclude Include="SymbolFile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

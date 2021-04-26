@@ -1,5 +1,5 @@
 
-#include "cvconst.h"
+//#include "cvconst.h"
 #include "regs.h"
 DWORD g_dwMachineType;
 const wchar_t * const rgRegX86[] = {

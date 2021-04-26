@@ -37,6 +37,8 @@
 
 
 typedef HMODULE (WINAPI * LOADLIBRARYEXA)(LPCSTR lpLibFileName,HANDLE hFile,DWORD  dwFlags);
+typedef void (WINAPI*  OUTPUTDEBUGSTRINGA)(LPCSTR lpOutputString);
+typedef _Post_equals_last_error_ DWORD (WINAPI* GETLASTERROR)();
 typedef BOOL (WINAPI * VIRTUALPROTECT)(LPVOID lpAddress,SIZE_T dwSize,DWORD  flNewProtect,PDWORD lpflOldProtect);
 typedef HMODULE (WINAPI * LOADLIBRARYA)( LPCSTR );
 typedef FARPROC (WINAPI * GETPROCADDRESS)( HMODULE, LPCSTR );

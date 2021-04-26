@@ -18,31 +18,5 @@
     <ClCompile Include="test.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SymbolFile.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="regs.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SharedIO.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="SymbolFile.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="regs.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Callback.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SharedIO.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="imguiren.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
