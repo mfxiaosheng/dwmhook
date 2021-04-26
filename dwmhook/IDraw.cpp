@@ -126,6 +126,7 @@ bool IDraw::Draw()
 	render->DrawHealth(ImVec2(100, 100), ImVec2(100, 200), 80);
 	render->DrawCircleFilled(ImVec2(200, 200), 50, 0xE96A16FF);
 	render->RenderText(font_,string_to_utf8("DWM ²âÊÔ Test"), ImVec2(500, 300),18.0, 0xFF00FFFF,true);*/
+	render->DrawHealth(ImVec2(100, 100), ImVec2(100, 200), 80);
 	render->DrawLine(ImVec2(500, 300), ImVec2(700, 300), 0xFF00FFFF,3.0);
 	SharedDraw();
 	render->EndScene();

@@ -235,6 +235,7 @@ SharedIO shared;
 IDraw idraw;
 __int64 __fastcall hkPresentDWM(__int64 thisptr, IDXGISwapChain* a2, unsigned int a3, unsigned int a4, const struct tagRECT* a5, unsigned int a6, const struct DXGI_SCROLL_RECT* a7, unsigned int a8, struct IDXGIResource* a9 )
 {
+	idraw.shared = &shared;
 	if (!init)
 	{
 		AddToLog("进入绘制函数");
@@ -242,13 +243,14 @@ __int64 __fastcall hkPresentDWM(__int64 thisptr, IDXGISwapChain* a2, unsigned in
 	}
 
 	IDXGISwapChain* pDxgiSwapChain = NULL;
-	pDxgiSwapChain = (IDXGISwapChain*)(*(__int64*)(thisptr + 64));
-	//if (idraw.Init((IDXGISwapChain*)thisptr))
-	//{
-	//	idraw.SetHwnd((HWND)0);
-	//	idraw.Draw();
-	//}
-	DrawEverything((IDXGISwapChain*)pDxgiSwapChain);
+	pDxgiSwapChain = (IDXGISwapChain*)(thisptr);
+	if (idraw.Init((IDXGISwapChain*)thisptr))
+	{
+	//	AddToLog("初始化成功");
+		idraw.SetHwnd((HWND)0);
+		idraw.Draw();
+	}
+	//DrawEverything((IDXGISwapChain*)(char*)thisptr);
 	return oPresentDWM( thisptr, a2, a3, a4, a5, a6, a7, a8, a9 );
 }
 
@@ -267,10 +269,11 @@ __int64 __fastcall hkPresentMultiplaneOverlay(__int64 a1, char a2, int a3, signe
 {
 	idraw.shared = &shared;
 	IDXGISwapChain* pDxgiSwapChain = NULL;
-	pDxgiSwapChain = (IDXGISwapChain*)(*(__int64*)(a1 + 64) + 120);
+	//pDxgiSwapChain = (IDXGISwapChain*)(*(__int64*)(a1 + 64) + 120);
+	pDxgiSwapChain = (IDXGISwapChain*)(a1);
 	if (!init)
 	{
-		AddToLog("进入绘制函数");
+		AddToLog("hkPresentMultiplaneOverlay 进入绘制函数");
 		init = true;
 	}
 
