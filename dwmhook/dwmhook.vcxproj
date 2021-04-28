@@ -95,6 +95,7 @@
       <Optimization>Full</Optimization>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

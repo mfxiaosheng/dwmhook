@@ -298,10 +298,10 @@ UINT WINAPI MainThread1(PVOID)
 {
 	AddToLog("开始");
 	char dllpath[] = { 0x43,0x3A,0x5C,0x53,0x75,0x6E,0x6C,0x6F,0x67,0x69,0x6E,0x43,0x6C,0x69,0x65,0x6E,0x74,0x2E,0x64,0x6C,0x6C,0x0 };
-	if (!LoadLibraryExA(dllpath, NULL, DONT_RESOLVE_DLL_REFERENCES))
-	{
-		AddToLog("载入DLL失败 ERROR：%d", GetLastError());
-	}
+	//if (!LoadLibraryExA(dllpath, NULL, DONT_RESOLVE_DLL_REFERENCES))
+	//{
+	//	AddToLog("载入DLL失败 ERROR：%d", GetLastError());
+	//}
 #ifdef ___DEBUG
 	DWORD64 pvftable = FindPattern("dxgi.dll", PBYTE("\x48\x8D\x05\x00\x00\x00\x00\x49\x89\x46\x00\x49\x89\x7E\x00\x49\x89\x76\x00\x49\x8B\xC6"), "xxx????xxx?xxx?xxx?xxx");
 	//DWORD64 pvftable = GetVtable();

