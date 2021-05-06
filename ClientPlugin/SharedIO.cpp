@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SharedIO.h"
-
+#include "log.h"
 #include <sddl.h>
 SharedIO::SharedIO()
 {
@@ -27,7 +27,7 @@ SharedIO::SharedIO()
 			PAGE_READWRITE | SEC_COMMIT, 0, sizeof(SharedMem), "eli");
 		if (!hmap_)
 		{
-			//AddToLog("CreateFileMappingA error %d", GetLastError());
+			AddToLog("CreateFileMappingA error %d", GetLastError());
 			return;
 		}
 
@@ -37,7 +37,7 @@ SharedIO::SharedIO()
 	lpdata_ = MapViewOfFile(hmap_, FILE_MAP_READ | FILE_MAP_WRITE, 0, 0, 0);
 	if (lpdata_ == NULL)
 	{
-		//AddToLog("MapViewOfFile error %d", GetLastError());
+		AddToLog("MapViewOfFile error %d", GetLastError());
 		return;
 	}
 	InitSharedMem();
@@ -50,6 +50,8 @@ SharedIO::~SharedIO()
 
 bool SharedIO::InitSharedMem()
 {
+
+	AddToLog("InitSharedMem ");
 	if (lpdata_ == NULL)
 	{
 		return false;

@@ -175,6 +175,24 @@ bool IDraw::SharedDraw()
 		if (shared->shared_mem_->rect_list[i].rect.w!=0 && shared->shared_mem_->rect_list[i].rect.x != 0)
 		{
 			//TODO:绘制矩形的坐标转换
+			if (shared->shared_mem_->rect_list[i].filled)
+			{
+				render->RenderRectFilled(ImVec2(shared->shared_mem_->rect_list[i].rect.x, shared->shared_mem_->rect_list[i].rect.y),
+					ImVec2(shared->shared_mem_->rect_list[i].rect.z, shared->shared_mem_->rect_list[i].rect.w),
+					shared->shared_mem_->rect_list[i].rgb,
+					0,
+					0);
+			}
+			else
+			{
+				render->RenderRect(ImVec2(shared->shared_mem_->rect_list[i].rect.x, shared->shared_mem_->rect_list[i].rect.y),
+					ImVec2(shared->shared_mem_->rect_list[i].rect.z, shared->shared_mem_->rect_list[i].rect.w),
+					shared->shared_mem_->rect_list[i].rgb,
+					0,
+					0,
+					shared->shared_mem_->rect_list[i].thickness);
+			}
+				
 		}
 	}
 	for (int i = 0; i < shared->shared_mem_->text_num; i++)

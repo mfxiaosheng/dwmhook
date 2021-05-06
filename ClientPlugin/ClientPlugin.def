@@ -5,3 +5,5 @@ DrawString
 DrawBegin
 DrawRircle
 DrawLine
+DrawRect
+Inject

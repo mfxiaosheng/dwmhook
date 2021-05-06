@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="inject">
+      <UniqueIdentifier>{0e46b8f0-48c0-4615-bcab-bbf65f40b2d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -22,6 +25,27 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="SharedIO.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GetProcAddressR.h">
+      <Filter>inject</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadLibraryR.h">
+      <Filter>inject</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectiveDLLInjection.h">
+      <Filter>inject</Filter>
+    </ClInclude>
+    <ClInclude Include="ck.h">
+      <Filter>inject</Filter>
+    </ClInclude>
+    <ClInclude Include="yapi.hpp">
+      <Filter>inject</Filter>
+    </ClInclude>
+    <ClInclude Include="inject.h">
+      <Filter>inject</Filter>
+    </ClInclude>
+    <ClInclude Include="log.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -34,6 +58,18 @@
     </ClCompile>
     <ClCompile Include="SharedIO.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GetProcAddressR.cpp">
+      <Filter>inject</Filter>
+    </ClCompile>
+    <ClCompile Include="inject.cpp">
+      <Filter>inject</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadLibraryR.cpp">
+      <Filter>inject</Filter>
+    </ClCompile>
+    <ClCompile Include="log.cpp">
+      <Filter>头文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
