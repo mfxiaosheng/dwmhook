@@ -9,7 +9,7 @@
 
 extern "C" __declspec(dllexport)  char*  WINAPI GetSymbolSig();
 extern "C" __declspec(dllexport) BOOL  WINAPI SetSymbolOffset(int offset);
-extern "C" __declspec(dllexport) BOOL WINAPI DrawString(char* text, ImVec2 & point, float size, int col, bool filled);
+extern "C" __declspec(dllexport) BOOL WINAPI DrawString(char* text, int x, int y, int size, int col, bool filled);
 extern "C" __declspec(dllexport) BOOL WINAPI DrawRircle(ImVec2 & point, float radius, int col, float thickness, bool filled);
 extern "C" __declspec(dllexport) BOOL WINAPI DrawLine(ImVec2 & strat, ImVec2 & end, int col, float thickness);
 extern "C" __declspec(dllexport) BOOL WINAPI DrawRect(int x, int y, int w, int h, int col, float thickness, bool filled);
@@ -40,7 +40,7 @@ extern "C" __declspec(dllexport) BOOL WINAPI SetSymbolOffset(int offset)
 }
 
 
-extern "C" __declspec(dllexport) BOOL WINAPI DrawString(char* text,ImVec2& point,float size,int col,bool filled)
+extern "C" __declspec(dllexport) BOOL WINAPI DrawString(char* text,int x,int y,int size,int col,bool filled)
 {
     if (shared->shared_mem_ == NULL)
     {
@@ -52,7 +52,7 @@ extern "C" __declspec(dllexport) BOOL WINAPI DrawString(char* text,ImVec2& point
         return FALSE;
     }
     shared->shared_mem_->text_list[shared->shared_mem_->text_num].filled = filled;
-    shared->shared_mem_->text_list[shared->shared_mem_->text_num].point = point;
+    shared->shared_mem_->text_list[shared->shared_mem_->text_num].point = ImVec2(x,y);
     shared->shared_mem_->text_list[shared->shared_mem_->text_num].rgb = col;
     shared->shared_mem_->text_list[shared->shared_mem_->text_num].size = size;
     strcpy(shared->shared_mem_->text_list[shared->shared_mem_->text_num].text, text);
