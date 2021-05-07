@@ -182,9 +182,7 @@ bool IDraw::SharedDraw()
 					shared->shared_mem_->rect_list[i].rgb,
 					0,
 					0);
-			}
-			else
-			{
+			}else{
 				render->RenderRect(ImVec2(shared->shared_mem_->rect_list[i].rect.x, shared->shared_mem_->rect_list[i].rect.y),
 					ImVec2(shared->shared_mem_->rect_list[i].rect.z, shared->shared_mem_->rect_list[i].rect.w),
 					shared->shared_mem_->rect_list[i].rgb,
@@ -202,7 +200,7 @@ bool IDraw::SharedDraw()
 			if (shared->shared_mem_->text_list[i].filled)
 				render->RenderText(font_, string_to_utf8(shared->shared_mem_->text_list[i].text), shared->shared_mem_->text_list[i].point, shared->shared_mem_->text_list[i].size, shared->shared_mem_->text_list[i].rgb,true);
 			else
-				render->RenderText(font_, string_to_utf8(shared->shared_mem_->text_list[i].text), shared->shared_mem_->text_list[i].point, shared->shared_mem_->text_list[i].size, shared->shared_mem_->text_list[i].rgb, true);
+				render->RenderText(font_, string_to_utf8(shared->shared_mem_->text_list[i].text), shared->shared_mem_->text_list[i].point, shared->shared_mem_->text_list[i].size, shared->shared_mem_->text_list[i].rgb, false);
 		}
 	}
 

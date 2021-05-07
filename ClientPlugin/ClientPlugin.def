@@ -6,4 +6,5 @@ DrawBegin
 DrawRircle
 DrawLine
 DrawRect
+DrawFilledRect
 Inject

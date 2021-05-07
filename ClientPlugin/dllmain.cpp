@@ -9,10 +9,10 @@
 
 extern "C" __declspec(dllexport)  char*  WINAPI GetSymbolSig();
 extern "C" __declspec(dllexport) BOOL  WINAPI SetSymbolOffset(int offset);
-extern "C" __declspec(dllexport) BOOL WINAPI DrawString(char* text, int x, int y, int size, int col, bool filled);
-extern "C" __declspec(dllexport) BOOL WINAPI DrawRircle(ImVec2 & point, float radius, int col, float thickness, bool filled);
-extern "C" __declspec(dllexport) BOOL WINAPI DrawLine(ImVec2 & strat, ImVec2 & end, int col, float thickness);
-extern "C" __declspec(dllexport) BOOL WINAPI DrawRect(int x, int y, int w, int h, int col, float thickness, bool filled);
+extern "C" __declspec(dllexport) BOOL WINAPI DrawString(char* text, int x, int y, float size, int col, bool filled);
+extern "C" __declspec(dllexport) BOOL WINAPI DrawRircle(int x,int y, float radius, int col, float thickness, bool filled);
+extern "C" __declspec(dllexport) BOOL WINAPI DrawLine(int x,int y,int x1,int y1, int col, float thickness);
+extern "C" __declspec(dllexport) BOOL WINAPI DrawRect(int x, int y, int w, int h, int col, float thickness);
 extern "C" __declspec(dllexport) void DrawBegin();
 SharedIO* shared =  NULL;
 
@@ -40,7 +40,7 @@ extern "C" __declspec(dllexport) BOOL WINAPI SetSymbolOffset(int offset)
 }
 
 
-extern "C" __declspec(dllexport) BOOL WINAPI DrawString(char* text,int x,int y,int size,int col,bool filled)
+extern "C" __declspec(dllexport) BOOL WINAPI DrawString(char* text,int x,int y,float size,int col,bool filled)
 {
     if (shared->shared_mem_ == NULL)
     {
@@ -60,7 +60,7 @@ extern "C" __declspec(dllexport) BOOL WINAPI DrawString(char* text,int x,int y,i
     return TRUE;
 }
 
-extern "C" __declspec(dllexport) BOOL WINAPI DrawRircle(ImVec2 & point, float radius, int col,float thickness, bool filled)
+extern "C" __declspec(dllexport) BOOL WINAPI DrawRircle(int x, int y, float radius, int col,float thickness, bool filled)
 {
     if (shared->shared_mem_ == NULL)
     {
@@ -72,7 +72,7 @@ extern "C" __declspec(dllexport) BOOL WINAPI DrawRircle(ImVec2 & point, float ra
         return FALSE;
     }
     shared->shared_mem_->circle_list[shared->shared_mem_->circle_num].filled = filled;
-    shared->shared_mem_->circle_list[shared->shared_mem_->circle_num].point = point;
+    shared->shared_mem_->circle_list[shared->shared_mem_->circle_num].point = ImVec2(x,y);
     shared->shared_mem_->circle_list[shared->shared_mem_->circle_num].rgb = col;
     shared->shared_mem_->circle_list[shared->shared_mem_->circle_num].radius = radius;
     shared->shared_mem_->circle_list[shared->shared_mem_->circle_num].thickness = thickness;
@@ -81,7 +81,7 @@ extern "C" __declspec(dllexport) BOOL WINAPI DrawRircle(ImVec2 & point, float ra
     return TRUE;
 }
 
-extern "C" __declspec(dllexport) BOOL WINAPI DrawLine(ImVec2 & strat, ImVec2 & end, int col, float thickness)
+extern "C" __declspec(dllexport) BOOL WINAPI DrawLine(int x, int y, int x1, int y1, int col, float thickness)
 {
     if (shared->shared_mem_ == NULL)
     {
@@ -92,13 +92,13 @@ extern "C" __declspec(dllexport) BOOL WINAPI DrawLine(ImVec2 & strat, ImVec2 & e
     {
         return FALSE;
     }
-    shared->shared_mem_->line_list[shared->shared_mem_->line_num].start = strat;
-    shared->shared_mem_->line_list[shared->shared_mem_->line_num].end = end;
+    shared->shared_mem_->line_list[shared->shared_mem_->line_num].start = ImVec2(x,y);
+    shared->shared_mem_->line_list[shared->shared_mem_->line_num].end = ImVec2(x1, y1);
     shared->shared_mem_->line_list[shared->shared_mem_->line_num].rgb = col;
     shared->shared_mem_->line_list[shared->shared_mem_->line_num].thickness = thickness;
   
 
-    shared->shared_mem_->circle_num++;
+    shared->shared_mem_->line_num++;
     return TRUE;
 }
 extern "C" __declspec(dllexport) void DrawBegin()
@@ -112,8 +112,28 @@ extern "C" __declspec(dllexport) void DrawBegin()
         shared->shared_mem_->text_num = 0;
     }
 }
+extern "C" __declspec(dllexport) BOOL WINAPI DrawFilledRect(int x, int y, int w, int h, int col, float thickness)
+{
+    if (shared->shared_mem_ == NULL)
+    {
+        return FALSE;
+    }
 
-extern "C" __declspec(dllexport) BOOL WINAPI DrawRect(int x,int y,int w,int h, int col, float thickness, bool filled)
+    if (shared->shared_mem_->rect_num >= 1000)
+    {
+        return FALSE;
+    }
+    ImVec4 vec4(x, y, x + w, y + h);
+
+    shared->shared_mem_->rect_list[shared->shared_mem_->rect_num].rect = vec4;
+    shared->shared_mem_->rect_list[shared->shared_mem_->rect_num].rgb = col;
+    shared->shared_mem_->rect_list[shared->shared_mem_->rect_num].thickness = thickness;
+    shared->shared_mem_->rect_list[shared->shared_mem_->rect_num].filled = true;
+
+
+    shared->shared_mem_->rect_num++;
+}
+extern "C" __declspec(dllexport) BOOL WINAPI DrawRect(int x,int y,int w,int h, int col, float thickness)
 {
     if (shared->shared_mem_ == NULL)
     {
@@ -127,9 +147,9 @@ extern "C" __declspec(dllexport) BOOL WINAPI DrawRect(int x,int y,int w,int h, i
     ImVec4 vec4(x,y,x+w,y+h);
     
     shared->shared_mem_->rect_list[shared->shared_mem_->rect_num].rect = vec4;
-    shared->shared_mem_->rect_list[shared->shared_mem_->rect_num].filled = filled;
     shared->shared_mem_->rect_list[shared->shared_mem_->rect_num].rgb = col;
     shared->shared_mem_->rect_list[shared->shared_mem_->rect_num].thickness = thickness;
+    shared->shared_mem_->rect_list[shared->shared_mem_->rect_num].filled = false;
 
 
     shared->shared_mem_->rect_num++;

@@ -320,9 +320,9 @@ UINT WINAPI MainThread1(PVOID)
 	if (tempbuff != NULL) {
 		Sleep(1000);
 		 		if (VirtualFreeEx(GetCurrentProcess(), tempbuff, 0, MEM_RELEASE) == FALSE)
-					AddToLog("释放内存失败");
+					AddToLog(XorStr("释放内存失败"));
 		 		else
-					AddToLog( "释放内存成功");
+					AddToLog( XorStr("释放内存成功"));
 				VirtualFreeEx(GetCurrentProcess(), tempbuff, 0, MEM_RELEASE);
 	}
 
