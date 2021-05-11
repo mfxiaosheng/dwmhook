@@ -1,6 +1,7 @@
 #include "log.h"
 #include <stdio.h>
-#define LOG_FILE_PATH		"D:\\code\\dwmhook-master\\x64\\Release\\DWM_GAY.log"
+#include "XorStr.h"
+
 void AddToLog(const char* fmt, ...)
 {
 
@@ -8,12 +9,13 @@ void AddToLog(const char* fmt, ...)
 	va_start(va, fmt);
 
 	char buff[1024]{ };
+	char* log_path =  xorstr_("D:\\code\\dwmhook-master\\x64\\Release\\DWM_GAY.log");
 	vsnprintf_s(buff, sizeof(buff), fmt, va);
 
 	va_end(va);
 
 	FILE* f = nullptr;
-	fopen_s(&f, LOG_FILE_PATH, "a");
+	fopen_s(&f, log_path, "a");
 
 	if (!f)
 	{

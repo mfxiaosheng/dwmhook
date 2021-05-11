@@ -1,5 +1,6 @@
 #include "IDraw.h"
 #include "log.h"
+
 IDraw::IDraw()
 {
 		//ImGui_ImplDX11_Init(g_hWnd, g_pd3dDevice, g_pd3dContext);
@@ -42,8 +43,8 @@ bool IDraw::Init(IDXGISwapChain* pDxgiSwapChain)
 		io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
 		ImGui_ImplWin32_Init(window);
 		ImGui_ImplDX11_Init(pD3DXDevice, pD3DXDeviceCtx);
-		if (!SetFont((char*)"c:\\Windows\\Fonts\\simhei.ttf"))
-			AddToLog("³õÊ¼»¯×ÖÌåÊ§°Ü");
+		if (!SetFont((char*)XorStr("c:\\Windows\\Fonts\\simhei.ttf")))
+			AddToLog(XorStr("init font error"));
 		
 		is_init_ = true;
 	}
@@ -88,9 +89,9 @@ bool IDraw::SetFont(char* font_path)
 {
 	ImGuiIO& io = ImGui::GetIO();
 
-	io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\simhei.ttf", 14.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
+	io.Fonts->AddFontFromFileTTF(XorStr("c:\\Windows\\Fonts\\simhei.ttf"), 14.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
 
-	font_ = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\simhei.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
+	font_ = io.Fonts->AddFontFromFileTTF(XorStr("c:\\Windows\\Fonts\\simhei.ttf"), 18.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
 	return font_ ? true : false;
 }
 
@@ -108,7 +109,8 @@ bool IDraw::Draw()
 	ImGui::NewFrame();
 	Renderer* render = Renderer::GetInstance();
 	this->render = render;
-	ImGui::Begin("ImGui Window");
+#if 0
+	ImGui::Begin(XorStr("ImGui Window"));
 
 
 	Point point;
@@ -118,17 +120,15 @@ bool IDraw::Draw()
 	ImU32 a = GetColor(0xFF8800FF);
 	ImGui::Text("Text Test");
 	ImGui::End();
-
+#endif // 0
 	//argb
 	render->BeginScene();
-	render->DrawOutlinedText(font_, string_to_utf8(XorStr("DWM ²âÊÔ Test")), ImVec2(0, 0), 18.0, 0xFF00FFFF, true);
-	/*render->DrawText(font_, XorStr("DWM ²âÊÔ Test"), ImVec2(500, 200), 18.0, 0xE96A16FF, true);
-	render->DrawHealth(ImVec2(100, 100), ImVec2(100, 200), 80);
-	render->DrawCircleFilled(ImVec2(200, 200), 50, 0xE96A16FF);
-	render->RenderText(font_,string_to_utf8("DWM ²âÊÔ Test"), ImVec2(500, 300),18.0, 0xFF00FFFF,true);*/
-	render->DrawHealth(ImVec2(100, 100), ImVec2(100, 200), 80);
-	render->DrawLine(ImVec2(500, 300), ImVec2(700, 300), 0xFF00FFFF,3.0);
+	/*render->DrawHealth(ImVec2(100, 100), ImVec2(100, 200), 80);
+	render->DrawLine(ImVec2(500, 300), ImVec2(700, 300), 0xFF00FFFF,3.0);*/
+	//Welcome to DWM Beta
+	
 	SharedDraw();
+	render->RenderText(font_, XorStr("Welcome to DWM Beta"), ImVec2(0, 0), 25, 0x80F38B00, false);
 	render->EndScene();
 
 	ImGui::Render();

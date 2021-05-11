@@ -279,6 +279,7 @@ void    ImGui_ImplWin32_NewFrame(HWND hwnd)
 		HDC hdc = GetDC(NULL);
         rect.right = GetDeviceCaps(hdc, HORZRES);
         rect.bottom = GetDeviceCaps(hdc, VERTRES);
+
 		ReleaseDC(NULL, hdc);
     }
 

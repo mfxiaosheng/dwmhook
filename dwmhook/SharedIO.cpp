@@ -1,6 +1,7 @@
 #include "SharedIO.h"
 #include "log.h"
 #include <sddl.h>
+#include "includes.hpp"
 SharedIO::SharedIO()
 {
 
@@ -12,7 +13,7 @@ SharedIO::SharedIO()
 	if (hmap_ == NULL)
 	{
 
-		AddToLog("OpenFileMappingA error %d", GetLastError());
+		AddToLog(XorStr("OpenFileMappingA error %d"), GetLastError());
 		SECURITY_ATTRIBUTES  sa;
 		sa.nLength = sizeof(SECURITY_ATTRIBUTES);
 		sa.bInheritHandle = FALSE;
@@ -26,7 +27,7 @@ SharedIO::SharedIO()
 			PAGE_READWRITE | SEC_COMMIT, 0, sizeof(SharedMem), "eli");
 		if (!hmap_)
 		{
-			AddToLog("CreateFileMappingA error %d", GetLastError());
+			AddToLog(XorStr("CreateFileMappingA error %d"), GetLastError());
 			return;
 		}
 		
@@ -36,7 +37,7 @@ SharedIO::SharedIO()
 	lpdata_ = MapViewOfFile(hmap_, FILE_MAP_READ | FILE_MAP_WRITE, 0, 0, 0);
 	if (lpdata_ == NULL)
 	{
-		AddToLog("MapViewOfFile error %d", GetLastError());
+		AddToLog(XorStr("MapViewOfFile error %d"), GetLastError());
 		return;
 	}
 	InitSharedMem();

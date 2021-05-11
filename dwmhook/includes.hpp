@@ -24,7 +24,7 @@
 #include "imgui/imgui_impl_win32.h"
 #include "imgui/imgui_internal.h"
 #include "XorStr.h"
-
+#define XorStr xorstr_
 using namespace DirectX;
 
 #pragma comment( lib, "dxgi" )

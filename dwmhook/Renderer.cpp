@@ -28,8 +28,8 @@ void Renderer::Initialize()
 
 	//io.Fonts->AddFontFromMemoryTTF(g_fRubik, sizeof(g_fRubik), 16.0f, NULL, io.Fonts->GetGlyphRangesCyrillic());
 	//m_pDefault = io.Fonts->AddFontFromMemoryTTF(g_fRubik, sizeof(g_fRubik), 15.0f, NULL, io.Fonts->GetGlyphRangesCyrillic());
-	m_pTabs = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\trebucbd.ttf", 62.f);
-	m_pSubTabs = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\trebuc.ttf", 25.f);
+	m_pTabs = io.Fonts->AddFontFromFileTTF(XorStr("C:\\Windows\\Fonts\\trebucbd.ttf"), 62.f);
+	m_pSubTabs = io.Fonts->AddFontFromFileTTF(XorStr("C:\\Windows\\Fonts\\trebuc.ttf"), 25.f);
 }
 
 void Renderer::BeginScene()

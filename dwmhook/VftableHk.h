@@ -41,7 +41,7 @@ public:
 			this->is_hook = true;
 		}
 		else
-			AddToLog(0, "内存不可访问", 0, 0);
+			AddToLog(0, XorStr("mem error 5"), 0, 0);
 
 		return retaddr;
 	}
