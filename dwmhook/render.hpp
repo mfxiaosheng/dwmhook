@@ -88,30 +88,31 @@ inline void fix_renderstate()
 	XMMATRIX view = XMMatrixLookAtLH( eye, at, up );
 	XMMATRIX proj = XMMatrixPerspectiveFovLH( XM_PIDIV2, bb.Width / ( FLOAT )bb.Height, 0.01f, 100.0f );
 
-	//float color[4] = { 0, 0, 0, 0 };
-	//device_context_ptr->ClearRenderTargetView(*rtview_ptr, color);
+	/*float color[4] = { 0, 0, 0, 0 };
+	pD3DXDeviceCtx->ClearRenderTargetView(*rtview_ptr, color);*/
+	
 	pD3DXDeviceCtx->OMSetRenderTargets( 1, &rtview_ptr, NULL );
 
-	D3D11_VIEWPORT viewport = { 0.0f, 0.0f, ( float )bb.Width, ( float )bb.Height, 0.0f, 1.0f };
-	pD3DXDeviceCtx->RSSetViewports( 1, &viewport );
-	pD3DXDeviceCtx->RSSetState( *rasterizer_state_ov );
+	//D3D11_VIEWPORT viewport = { 0.0f, 0.0f, ( float )bb.Width, ( float )bb.Height, 0.0f, 1.0f };
+	//pD3DXDeviceCtx->RSSetViewports( 1, &viewport );
+	//pD3DXDeviceCtx->RSSetState( *rasterizer_state_ov );
 
-	pD3DXDeviceCtx->IASetInputLayout( *input_layout_ptr );
-	pD3DXDeviceCtx->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+	//pD3DXDeviceCtx->IASetInputLayout( *input_layout_ptr );
+	//pD3DXDeviceCtx->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-	UINT stride = sizeof( SimpleVertex ), offset = 0;
-	pD3DXDeviceCtx->IASetVertexBuffers( 0, 1, &vertex_buffer_ptr, &stride, &offset );
-	pD3DXDeviceCtx->IASetIndexBuffer( *index_buffer_ptr, DXGI_FORMAT_R16_UINT, 0 );
+	//UINT stride = sizeof( SimpleVertex ), offset = 0;
+	//pD3DXDeviceCtx->IASetVertexBuffers( 0, 1, &vertex_buffer_ptr, &stride, &offset );
+	//pD3DXDeviceCtx->IASetIndexBuffer( *index_buffer_ptr, DXGI_FORMAT_R16_UINT, 0 );
 
-	ConstantBuffer cb;
-	cb.mWorld = XMMatrixTranspose( world );
-	cb.mView = XMMatrixTranspose( view );
-	cb.mProjection = XMMatrixTranspose( proj );
-	pD3DXDeviceCtx->UpdateSubresource( *const_buffer_ptr, 0, NULL, &cb, 0, 0 );
+	//ConstantBuffer cb;
+	//cb.mWorld = XMMatrixTranspose( world );
+	//cb.mView = XMMatrixTranspose( view );
+	//cb.mProjection = XMMatrixTranspose( proj );
+	//pD3DXDeviceCtx->UpdateSubresource( *const_buffer_ptr, 0, NULL, &cb, 0, 0 );
 
-	pD3DXDeviceCtx->VSSetShader( *vertex_shader_ptr, NULL, 0 );
-	pD3DXDeviceCtx->VSSetConstantBuffers( 0, 1, &const_buffer_ptr );
-	pD3DXDeviceCtx->PSSetShader( *pixel_shader_ptr, NULL, 0 );
+	//pD3DXDeviceCtx->VSSetShader( *vertex_shader_ptr, NULL, 0 );
+	//pD3DXDeviceCtx->VSSetConstantBuffers( 0, 1, &const_buffer_ptr );
+	//pD3DXDeviceCtx->PSSetShader( *pixel_shader_ptr, NULL, 0 );
 	//pD3DXDeviceCtx->DrawIndexed( 36, 0, 0 );
 
 	pD3DXDeviceCtx->RSSetState( *rasterizer_state );

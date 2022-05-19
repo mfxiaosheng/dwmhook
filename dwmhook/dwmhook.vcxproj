@@ -5,6 +5,10 @@
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="dll|x64">
+      <Configuration>dll</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
@@ -15,6 +19,7 @@
     <ProjectGuid>{BF574599-3CE2-4360-B229-D747272D45CF}</ProjectGuid>
     <RootNamespace>dwmhook</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>reflective</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -29,6 +34,15 @@
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='dll|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -41,6 +55,9 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='dll|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -48,10 +65,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='dll|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -66,7 +86,32 @@
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>Disabled</Optimization>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>PolyHook_2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateMapFile>true</GenerateMapFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='dll|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -110,9 +155,25 @@
     <ClCompile Include="FW1\CFW1TextRendererInterface.cpp" />
     <ClCompile Include="FW1\FW1FontWrapper.cpp" />
     <ClCompile Include="FW1\FW1Precompiled.cpp" />
+    <ClCompile Include="IDraw.cpp" />
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="imgui\imgui_impl_dx9.cpp" />
+    <ClCompile Include="imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="log.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PdbFile.cpp" />
+    <ClCompile Include="ReflectiveDll\ReflectiveDll.cpp" />
+    <ClCompile Include="ReflectiveDll\ReflectiveLoader.cpp" />
     <ClCompile Include="render.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="save_state.cpp" />
+    <ClCompile Include="SharedIO.cpp" />
+    <ClCompile Include="VftableHk.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ck.h" />
@@ -132,36 +193,27 @@
     <ClInclude Include="FW1\FW1CompileSettings.h" />
     <ClInclude Include="FW1\FW1FontWrapper.h" />
     <ClInclude Include="FW1\FW1Precompiled.h" />
+    <ClInclude Include="IDraw.h" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="imgui\imgui_impl_dx9.h" />
+    <ClInclude Include="imgui\imgui_impl_win32.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="includes.hpp" />
-    <ClInclude Include="polyhook2\ADisassembler.hpp" />
-    <ClInclude Include="polyhook2\CapstoneDisassembler.hpp" />
-    <ClInclude Include="polyhook2\Detour\ADetour.hpp" />
-    <ClInclude Include="polyhook2\Detour\ILCallback.hpp" />
-    <ClInclude Include="polyhook2\Detour\x64Detour.hpp" />
-    <ClInclude Include="polyhook2\Detour\x86Detour.hpp" />
-    <ClInclude Include="polyhook2\Enums.hpp" />
-    <ClInclude Include="polyhook2\ErrorLog.hpp" />
-    <ClInclude Include="polyhook2\EventDispatcher.hpp" />
-    <ClInclude Include="polyhook2\Exceptions\AVehHook.hpp" />
-    <ClInclude Include="polyhook2\Exceptions\BreakPointHook.hpp" />
-    <ClInclude Include="polyhook2\Exceptions\HWBreakPointHook.hpp" />
-    <ClInclude Include="polyhook2\IHook.hpp" />
-    <ClInclude Include="polyhook2\Instruction.hpp" />
-    <ClInclude Include="polyhook2\MemAccessor.hpp" />
-    <ClInclude Include="polyhook2\MemProtector.hpp" />
-    <ClInclude Include="polyhook2\Misc.hpp" />
-    <ClInclude Include="polyhook2\PageAllocator.hpp" />
-    <ClInclude Include="polyhook2\PE\EatHook.hpp" />
-    <ClInclude Include="polyhook2\PE\IatHook.hpp" />
-    <ClInclude Include="polyhook2\PE\PEB.hpp" />
-    <ClInclude Include="polyhook2\Tests\StackCanary.hpp" />
-    <ClInclude Include="polyhook2\Tests\TestEffectTracker.hpp" />
-    <ClInclude Include="polyhook2\UID.hpp" />
-    <ClInclude Include="polyhook2\Virtuals\VFuncSwapHook.hpp" />
-    <ClInclude Include="polyhook2\Virtuals\VTableSwapHook.hpp" />
-    <ClInclude Include="polyhook2\ZydisDisassembler.hpp" />
+    <ClInclude Include="log.h" />
+    <ClInclude Include="PdbFile.h" />
+    <ClInclude Include="ReflectiveDll\ReflectiveDLLInjection.h" />
+    <ClInclude Include="ReflectiveDll\ReflectiveLoader.h" />
     <ClInclude Include="render.hpp" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="save_state.hpp" />
+    <ClInclude Include="SharedIO.h" />
+    <ClInclude Include="VftableHk.h" />
+    <ClInclude Include="XorStr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -19,7 +19,12 @@
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <d3dcompiler.h>
-
+#include "SharedIO.h"
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
+#include "imgui/imgui_internal.h"
+#include "XorStr.h"
+#define XorStr xorstr_
 using namespace DirectX;
 
 #pragma comment( lib, "dxgi" )
@@ -27,6 +32,9 @@ using namespace DirectX;
 #pragma comment( lib, "d3d11" )
 #pragma comment( lib, "dcomp" )
 #pragma comment( lib, "dwrite" )
+#pragma comment( lib, "Gdi32.lib" )
+#pragma comment(lib,"Advapi32.lib")
+#pragma comment(lib,"User32.lib")
 #ifdef _DEBUG
 #pragma comment( lib, "minhook-debug.lib" )
 #else
@@ -35,7 +43,7 @@ using namespace DirectX;
 #pragma comment( lib, "d3dcompiler.lib" )
 
 #define SAFE_RELEASE( p )	if( p ) { p->Release(); p = nullptr; }
-#define LOG_FILE_PATH		"C:\\DWM_GAY.log"
+
 
 #include "MinHook.h"
 #include "save_state.hpp"
